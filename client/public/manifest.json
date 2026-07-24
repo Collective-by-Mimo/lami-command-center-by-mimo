@@ -1,0 +1,25 @@
+{
+  "short_name": "LaMi",
+  "name": "LaMi Command Center — Mimo's Collective",
+  "description": "Private digital executive office & lifestyle concierge dashboard for Layla",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#F7F5F1",
+  "theme_color": "#145A52",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/"
+}
