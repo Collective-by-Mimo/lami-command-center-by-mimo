@@ -1,5 +1,5 @@
-import { CaseItem, BriefingData, UtilityItem, KeyDateItem, HandoffItem, I18nText, TimelineEntry, ClientState, InternalStatus, Priority, Language } from '../types';
-import { INITIAL_CASES, INITIAL_BRIEFING, INITIAL_UTILITIES } from '../data/seedData';
+import { CaseItem, BriefingData, UtilityItem, KeyDateItem, HandoffItem, I18nText, TimelineEntry, ClientState, InternalStatus, Priority, Language, FinanceTransaction } from '../types';
+import { INITIAL_CASES, INITIAL_BRIEFING, INITIAL_UTILITIES, INITIAL_TRANSACTIONS } from '../data/seedData';
 import INITIAL_KEYDATES from '../data/keydates.json';
 
 const CASES_STORAGE_KEY = 'lami_cases_data_v1';
@@ -7,6 +7,7 @@ const BRIEFING_STORAGE_KEY = 'lami_briefing_data_v1';
 const UTILITIES_STORAGE_KEY = 'lami_utilities_data_v1';
 const KEYDATES_STORAGE_KEY = 'lami_keydates_data_v1';
 const HANDOFFS_STORAGE_KEY = 'lami_handoffs_data_v1';
+const FINANCE_STORAGE_KEY = 'lami_finance_data_v1';
 
 // Helper to safely load from LocalStorage or fall back to seed
 function loadFromStorage<T>(key: string, defaultVal: T): T {
@@ -57,6 +58,8 @@ export class DataAdapter {
   private static utilities: UtilityItem[] = loadFromStorage<UtilityItem[]>(UTILITIES_STORAGE_KEY, INITIAL_UTILITIES);
   private static keyDates: KeyDateItem[] = loadFromStorage<KeyDateItem[]>(KEYDATES_STORAGE_KEY, INITIAL_KEYDATES as KeyDateItem[]);
   private static handoffs: HandoffItem[] = loadFromStorage<HandoffItem[]>(HANDOFFS_STORAGE_KEY, INITIAL_HANDOFFS);
+  // Finance ledger — localStorage for Phase 1. TODO cloud storage (receipts are base64 for now)
+  private static transactions: FinanceTransaction[] = loadFromStorage<FinanceTransaction[]>(FINANCE_STORAGE_KEY, INITIAL_TRANSACTIONS);
 
   // Get all active or archived cases
   public static getCases(): CaseItem[] {
@@ -316,6 +319,34 @@ export class DataAdapter {
     return this.updateCase(caseItem);
   }
 
+  // ——— Finance ledger ———
+  public static getTransactions(): FinanceTransaction[] {
+    return [...this.transactions];
+  }
+
+  public static addTransaction(tx: Omit<FinanceTransaction, 'id'>): FinanceTransaction {
+    const created: FinanceTransaction = { ...tx, id: `tx-${Date.now()}` };
+    this.transactions.unshift(created);
+    saveToStorage(FINANCE_STORAGE_KEY, this.transactions);
+    return created;
+  }
+
+  public static updateTransaction(updated: FinanceTransaction): FinanceTransaction {
+    const index = this.transactions.findIndex((t) => t.id === updated.id);
+    if (index >= 0) {
+      this.transactions[index] = { ...updated };
+    } else {
+      this.transactions.unshift(updated);
+    }
+    saveToStorage(FINANCE_STORAGE_KEY, this.transactions);
+    return updated;
+  }
+
+  public static deleteTransaction(id: string): void {
+    this.transactions = this.transactions.filter((t) => t.id !== id);
+    saveToStorage(FINANCE_STORAGE_KEY, this.transactions);
+  }
+
   // Get briefing prose
   public static getBriefing(): BriefingData {
     return { ...this.briefing };
@@ -345,7 +376,8 @@ export class DataAdapter {
       operator: 'Movsum "Mimo" Mirzazada',
       briefing: this.briefing,
       cases: this.cases,
-      utilities: this.utilities
+      utilities: this.utilities,
+      transactions: this.transactions
     };
     return JSON.stringify(exportObject, null, 2);
   }
@@ -366,6 +398,10 @@ export class DataAdapter {
         this.utilities = parsed.utilities;
         saveToStorage(UTILITIES_STORAGE_KEY, this.utilities);
       }
+      if (parsed.transactions && Array.isArray(parsed.transactions)) {
+        this.transactions = parsed.transactions;
+        saveToStorage(FINANCE_STORAGE_KEY, this.transactions);
+      }
       return true;
     } catch (err) {
       console.error('Import failed:', err);
@@ -380,10 +416,12 @@ export class DataAdapter {
     this.utilities = [...INITIAL_UTILITIES];
     this.keyDates = [...(INITIAL_KEYDATES as KeyDateItem[])];
     this.handoffs = [];
+    this.transactions = [...INITIAL_TRANSACTIONS];
     saveToStorage(CASES_STORAGE_KEY, this.cases);
     saveToStorage(BRIEFING_STORAGE_KEY, this.briefing);
     saveToStorage(UTILITIES_STORAGE_KEY, this.utilities);
     saveToStorage(KEYDATES_STORAGE_KEY, this.keyDates);
     saveToStorage(HANDOFFS_STORAGE_KEY, this.handoffs);
+    saveToStorage(FINANCE_STORAGE_KEY, this.transactions);
   }
 }

@@ -1,4 +1,4 @@
-import { CaseItem, BriefingData, UtilityItem } from '../types';
+import { CaseItem, BriefingData, UtilityItem, FinanceTransaction } from '../types';
 
 export const INITIAL_BRIEFING: BriefingData = {
   lastUpdated: '2026-07-24T09:00:00Z',
@@ -57,6 +57,63 @@ export const INITIAL_UTILITIES: UtilityItem[] = [
       en: 'Account active · Registration verified',
       he: 'חשבון פעיל · רישום מאומת'
     }
+  }
+];
+
+export const INITIAL_TRANSACTIONS: FinanceTransaction[] = [
+  {
+    id: 'tx-2026-07-01',
+    date: '2026-07-24',
+    description: 'Lavanderia — 5 peças delicadas (coleta residencial)',
+    category: 'lavanderia',
+    amountAED: 640,
+    type: 'expense',
+    status: 'pending'
+  },
+  {
+    id: 'tx-2026-07-02',
+    date: '2026-07-20',
+    description: 'DEWA — fatura mensal de julho',
+    category: 'utilidades',
+    amountAED: 1240.55,
+    type: 'expense',
+    status: 'confirmed'
+  },
+  {
+    id: 'tx-2026-07-03',
+    date: '2026-07-18',
+    description: 'Tasleem — crédito em verificação (−3.216,08 AED)',
+    category: 'utilidades',
+    amountAED: 3216.08,
+    type: 'reimbursement',
+    status: 'pending'
+  },
+  {
+    id: 'tx-2026-07-04',
+    date: '2026-07-15',
+    description: 'Adiantamento mensal — fundo da casa',
+    category: 'casa',
+    amountAED: 5000,
+    type: 'income',
+    status: 'confirmed'
+  },
+  {
+    id: 'tx-2026-07-05',
+    date: '2026-07-10',
+    description: 'Just Life — limpeza semanal (mês completo)',
+    category: 'limpeza',
+    amountAED: 780,
+    type: 'expense',
+    status: 'confirmed'
+  },
+  {
+    id: 'tx-2026-06-01',
+    date: '2026-06-28',
+    description: 'Orquídeas — arranjos da residência',
+    category: 'pessoal',
+    amountAED: 420,
+    type: 'expense',
+    status: 'reimbursed'
   }
 ];
 

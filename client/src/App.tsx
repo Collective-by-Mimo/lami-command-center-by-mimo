@@ -13,6 +13,7 @@ import { ArchiveScreen } from './components/ArchiveScreen';
 import { UtilitiesPanel } from './components/UtilitiesPanel';
 import { ContactsScreen } from './components/ContactsScreen';
 import { ConnectionsScreen } from './components/ConnectionsScreen';
+import { FinanceScreen } from './components/FinanceScreen';
 import { OperatorPanel } from './components/OperatorPanel';
 import { ProofModal } from './components/ProofModal';
 import { ConciergeAI } from './components/ConciergeAI';
@@ -48,6 +49,7 @@ const MainContent: React.FC = () => {
       case 'utilities': return <UtilitiesPanel />;
       case 'contacts': return <ContactsScreen />;
       case 'connections': return <ConnectionsScreen />;
+      case 'finance': return <FinanceScreen />;
       default: return <BriefingScreen />;
     }
   };
