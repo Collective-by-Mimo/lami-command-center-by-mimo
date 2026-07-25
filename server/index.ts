@@ -2,8 +2,8 @@ import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
-import { conciergeReply } from "../api/_lib/concierge";
-import { getSheetsConfig, syncLedgerToSheet, LedgerRow } from "../api/_lib/sheets";
+import { conciergeReply } from "../api/_lib/concierge.js";
+import { getSheetsConfig, syncLedgerToSheet, LedgerRow } from "../api/_lib/sheets.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

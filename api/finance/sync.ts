@@ -4,8 +4,8 @@
  * environment only; without them the client keeps using localStorage
  * ("Sincronização com Google Sheets pendente").
  */
-import { getSheetsConfig, syncLedgerToSheet, LedgerRow } from "../_lib/sheets";
-import type { ApiRequest, ApiResponse } from "../_lib/apiTypes";
+import { getSheetsConfig, syncLedgerToSheet, LedgerRow } from "../_lib/sheets.js";
+import type { ApiRequest, ApiResponse } from "../_lib/apiTypes.js";
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== "POST") {

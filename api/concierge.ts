@@ -4,8 +4,8 @@
  * never reaches the client; without it (or on ANY error) the response is
  * the localized graceful WhatsApp fallback with HTTP 200 — never a raw error.
  */
-import { conciergeReply, CONCIERGE_FALLBACK } from "./_lib/concierge";
-import type { ApiRequest, ApiResponse } from "./_lib/apiTypes";
+import { conciergeReply, CONCIERGE_FALLBACK } from "./_lib/concierge.js";
+import type { ApiRequest, ApiResponse } from "./_lib/apiTypes.js";
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== "POST") {
