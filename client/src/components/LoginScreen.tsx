@@ -5,7 +5,7 @@ import { authenticateBiometric, isWebAuthnSupported } from '../utils/webauthn';
 import { hapticTap, hapticWarning } from '../utils/haptics';
 
 export const LoginScreen: React.FC = () => {
-  const { login, loginBiometric, language, setLanguage, isRTL, isBiometricEnabled } = useApp();
+  const { login, loginBiometric, language, isRTL, isBiometricEnabled } = useApp();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -75,23 +75,6 @@ export const LoginScreen: React.FC = () => {
       {/* Ambient gold glow */}
       <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full pointer-events-none"
            style={{ background: 'radial-gradient(circle, rgba(184,145,46,0.12) 0%, transparent 70%)' }} />
-
-      {/* Language pill — top right */}
-      <div className="absolute top-5 right-5 flex items-center gap-1 bg-white/8 backdrop-blur-md px-2.5 py-1.5 rounded-full border border-white/10 text-[11px] z-20">
-        {(['pt', 'en', 'he'] as const).map((lang) => (
-          <button
-            key={lang}
-            onClick={() => setLanguage(lang)}
-            className={`px-2 py-0.5 rounded-full uppercase font-mono font-bold transition-all ${
-              language === lang
-                ? 'bg-[#B8912E] text-[#0E3F3A]'
-                : 'text-[#E2DDD5]/60 hover:text-white'
-            }`}
-          >
-            {lang}
-          </button>
-        ))}
-      </div>
 
       {/* ── WARM CREAM CARD ── */}
       <div className="w-full max-w-sm relative z-10">
@@ -217,7 +200,7 @@ export const LoginScreen: React.FC = () => {
                   if (success) {
                     loginBiometric();
                   } else {
-                    setErrorMessage('Falha na autenticação biométrica.');
+                    setErrorMessage('Biometric authentication failed.');
                   }
                   setIsSubmitting(false);
                 }}

@@ -131,13 +131,13 @@ export const BriefingScreen: React.FC = () => {
                 }}
                 className="px-4 py-1.5 bg-[#145A52] text-white text-[13px] font-semibold rounded-full"
               >
-                Salvar
+                Save
               </button>
               <button
                 onClick={() => setEditingBriefing(false)}
                 className="px-4 py-1.5 text-[#6B7280] text-[13px] font-medium rounded-full border border-[#E2DDD5]"
               >
-                Cancelar
+                Cancel
               </button>
             </div>
           </div>

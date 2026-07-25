@@ -54,7 +54,7 @@ export const CaseDetailScreen: React.FC = () => {
   if (!caseItem) {
     return (
       <div className="py-12 text-center space-y-4">
-        <p className="text-sm text-[#62726F]">Caso não encontrado.</p>
+        <p className="text-sm text-[#62726F]">Case not found.</p>
         <button
           onClick={() => setCurrentView('cases')}
           className="text-xs font-semibold bg-[#145A52] text-white px-4 py-2 rounded-xl"
@@ -67,6 +67,14 @@ export const CaseDetailScreen: React.FC = () => {
 
   const titleText = caseItem.title[language] || caseItem.title.pt;
   const nextStepText = caseItem.nextStep[language] || caseItem.nextStep.pt;
+
+  // English display labels for the clientState enum (stored value stays as-is)
+  const STATE_LABEL: Record<string, string> = {
+    '🔔 Aguardando você': '🔔 Awaiting you',
+    '✅ Em nossas mãos': '✅ In our hands',
+    '✔️ Concluído': '✔️ Completed'
+  };
+  const clientStateLabel = STATE_LABEL[caseItem.clientState] || caseItem.clientState;
 
   const handleAddTimeline = (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,7 +94,7 @@ export const CaseDetailScreen: React.FC = () => {
 
   const handleConfirmComplete = () => {
     if (!proofNoteText.trim()) {
-      showToast('Por favor, informe a nota do comprovante para concluir.');
+      showToast('Please enter the proof note before completing.');
       return;
     }
 
@@ -162,12 +170,12 @@ export const CaseDetailScreen: React.FC = () => {
                         : 'bg-[#EEF7F5] text-[#145A52] border border-[#145A52]/20'
                   }`}
                 >
-                  {caseItem.clientState}
+                  {clientStateLabel}
                 </span>
 
                 {isOperator && (
                   <span className="text-xs font-mono bg-[#0E3F3A] text-white px-2.5 py-0.5 rounded-full">
-                    Interno: {caseItem.internalStatus}
+                    Internal: {caseItem.internalStatus}
                   </span>
                 )}
               </div>
@@ -189,7 +197,7 @@ export const CaseDetailScreen: React.FC = () => {
         {isOperator && (
           <div className="pt-2 border-t border-[#E2DDD5] flex items-center justify-between gap-2 flex-wrap text-xs">
             <div className="flex items-center gap-2">
-              <span className="font-medium text-[#62726F]">Estado Cliente:</span>
+              <span className="font-medium text-[#62726F]">Client state:</span>
               <select
                 value={caseItem.clientState}
                 onChange={(e) => {
@@ -200,9 +208,9 @@ export const CaseDetailScreen: React.FC = () => {
                 }}
                 className="bg-[#F7F5F1] border border-[#E2DDD5] rounded-lg px-2 py-1 font-semibold text-[#145A52]"
               >
-                <option value="🔔 Aguardando você">🔔 Aguardando você</option>
-                <option value="✅ Em nossas mãos">✅ Em nossas mãos</option>
-                <option value="✔️ Concluído">✔️ Concluído</option>
+                <option value="🔔 Aguardando você">🔔 Awaiting you</option>
+                <option value="✅ Em nossas mãos">✅ In our hands</option>
+                <option value="✔️ Concluído">✔️ Completed</option>
               </select>
             </div>
 
@@ -220,11 +228,11 @@ export const CaseDetailScreen: React.FC = () => {
                 onClick={() => {
                   updateCaseDetails({ ...caseItem, clientState: '🔔 Aguardando você' });
                   notifyAwaitingApproval(caseItem.title.pt);
-                  showToast('Cliente notificada — aguardando aprovação.');
+                  showToast('Client notified — awaiting approval.');
                 }}
                 className="bg-[#145A52] text-white px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1 shadow-xs"
               >
-                🔔 <span>Pedir aprovação</span>
+                🔔 <span>Request approval</span>
               </button>
             )}
           </div>
@@ -360,19 +368,19 @@ export const CaseDetailScreen: React.FC = () => {
             >
               <img
                 src={caseItem.completionProof.photoUrl}
-                alt="Comprovante"
+                alt="Proof"
                 className="w-full h-48 object-cover group-hover:scale-105 transition-transform"
                 referrerPolicy="no-referrer"
               />
               <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <span className="text-xs text-white font-medium bg-black/60 px-3 py-1.5 rounded-full">
-                  Ampliar Comprovante
+                  Enlarge proof
                 </span>
               </div>
             </div>
           )}
           <span className="text-[10px] text-[#E2DDD5]/70 block font-mono">
-            Concluído em: {caseItem.completionProof.completedAt}
+            Completed on: {caseItem.completionProof.completedAt}
           </span>
         </div>
       )}
@@ -385,7 +393,7 @@ export const CaseDetailScreen: React.FC = () => {
             <span>{getTranslation('timelineTitle', language)}</span>
           </h2>
           <span className="text-xs text-[#62726F] font-mono">
-            {caseItem.timeline.length} registros
+            {caseItem.timeline.length} entries
           </span>
         </div>
 
@@ -394,12 +402,12 @@ export const CaseDetailScreen: React.FC = () => {
           <form onSubmit={handleAddTimeline} className="bg-[#F7F5F1] p-4 rounded-2xl border border-[#E2DDD5] space-y-3">
             <span className="text-xs font-semibold text-[#145A52] flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-[#B8912E]" />
-              Nova Atualização do Operador (Mimo)
+              New operator update (Mimo)
             </span>
             <textarea
               value={newTimelineText}
               onChange={(e) => setNewTimelineText(e.target.value)}
-              placeholder="Digite o andamento ou novidade do caso..."
+              placeholder="Type the case progress or update..."
               rows={2}
               className="w-full p-3 bg-white border border-[#E2DDD5] rounded-xl text-xs text-[#1C2826] focus:outline-none focus:border-[#145A52]"
             />
@@ -408,7 +416,7 @@ export const CaseDetailScreen: React.FC = () => {
                 type="text"
                 value={photoUrlInput}
                 onChange={(e) => setPhotoUrlInput(e.target.value)}
-                placeholder="URL da Foto / Comprovante (opcional)"
+                placeholder="Photo / proof URL (optional)"
                 className="flex-1 p-2 bg-white border border-[#E2DDD5] rounded-xl text-xs text-[#1C2826]"
               />
               <button
@@ -416,7 +424,7 @@ export const CaseDetailScreen: React.FC = () => {
                 className="bg-[#145A52] text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-[#0E3F3A] transition flex items-center gap-1 shrink-0"
               >
                 <Send className="w-3.5 h-3.5" />
-                <span>Adicionar</span>
+                <span>Add</span>
               </button>
             </div>
           </form>
@@ -452,7 +460,7 @@ export const CaseDetailScreen: React.FC = () => {
                         <img
                           key={idx}
                           src={photo}
-                          alt="Foto do histórico"
+                          alt="Timeline photo"
                           onClick={() => openImageModal(photo)}
                           className="w-20 h-20 object-cover rounded-xl border border-[#E2DDD5] cursor-pointer hover:opacity-90 transition"
                           referrerPolicy="no-referrer"
@@ -484,16 +492,16 @@ export const CaseDetailScreen: React.FC = () => {
             className="bg-white rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl"
           >
             <h3 className="font-serif-display text-xl font-bold text-[#1C2826]">
-              Concluir Caso & Enviar para o Arquivo
+              Complete Case & Send to Archive
             </h3>
             <p className="text-xs text-[#62726F]">
-              Pela regra de qualidade, cada conclusão precisa de uma nota de entrega/comprovante para o arquivo do cliente.
+              By quality rule, each completion needs a delivery/proof note for the client's archive.
             </p>
 
             <textarea
               value={proofNoteText}
               onChange={(e) => setProofNoteText(e.target.value)}
-              placeholder="Ex: Entrega realizada na residência e nota fiscal armazenada."
+              placeholder="e.g. Delivered to the residence and invoice stored."
               rows={3}
               className="w-full p-3 bg-[#F7F5F1] border border-[#E2DDD5] rounded-xl text-xs focus:outline-none focus:border-[#145A52]"
             />
@@ -502,7 +510,7 @@ export const CaseDetailScreen: React.FC = () => {
               type="text"
               value={proofPhotoUrl}
               onChange={(e) => setProofPhotoUrl(e.target.value)}
-              placeholder="URL da foto do comprovante/recibo (opcional)"
+              placeholder="Receipt/proof photo URL (optional)"
               className="w-full p-2.5 bg-[#F7F5F1] border border-[#E2DDD5] rounded-xl text-xs"
             />
 
@@ -511,13 +519,13 @@ export const CaseDetailScreen: React.FC = () => {
                 onClick={() => setShowCompleteModal(false)}
                 className="flex-1 py-2.5 rounded-xl text-xs font-semibold border border-[#E2DDD5] text-[#62726F] hover:bg-gray-50"
               >
-                Cancelar
+                Cancel
               </button>
               <button
                 onClick={handleConfirmComplete}
                 className="flex-1 py-2.5 rounded-xl text-xs font-semibold bg-[#145A52] text-white hover:bg-[#0E3F3A]"
               >
-                Confirmar Conclusão
+                Confirm Completion
               </button>
             </div>
           </motion.div>

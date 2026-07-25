@@ -60,11 +60,9 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Check URL params for ?op=1 or saved preferences
-  const [language, setLanguageState] = useState<Language>(() => {
-    const saved = localStorage.getItem('lami_lang') as Language;
-    return (saved === 'pt' || saved === 'en' || saved === 'he') ? saved : 'pt';
-  });
+  // Single-language build: the app is English-only, LTR. The trilingual data
+  // shape is retained internally but only the English value is ever shown.
+  const [language] = useState<Language>('en');
 
   const [isOperator, setIsOperatorState] = useState<boolean>(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -137,7 +135,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.removeItem('lami_authenticated');
   };
 
-  const isRTL = language === 'he';
+  const isRTL = false; // English-only build is always left-to-right
 
   // Find active radar suggestions (all triggered pending key dates)
   // Logic: today >= (date - lead_time_days) and status !== 'accepted' && status !== 'dismissed'
@@ -160,11 +158,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const activeRadarSuggestion = activeRadarSuggestions[0] || null;
 
-  // Apply dir="rtl" or "ltr" to html document tag for Hebrew
+  // English-only build: always LTR, lang="en"
   useEffect(() => {
-    document.documentElement.setAttribute('dir', isRTL ? 'rtl' : 'ltr');
-    document.documentElement.setAttribute('lang', language);
-  }, [language, isRTL]);
+    document.documentElement.setAttribute('dir', 'ltr');
+    document.documentElement.setAttribute('lang', 'en');
+  }, []);
 
   // Handle PWA installation & Service Worker registration with Offline State Sync
   useEffect(() => {
@@ -220,7 +218,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const next = !hapticsOn;
     setHapticsOnState(next);
     setHapticsEnabled(next);
-    showToast(next ? 'Vibração tátil ativada 📱' : 'Vibração tátil desativada 🔇');
+    showToast(next ? 'Haptic feedback on 📱' : 'Haptic feedback off 🔇');
     if (next) hapticTap();
   };
 
@@ -235,15 +233,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCanInstallPWA(false);
   };
 
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    localStorage.setItem('lami_lang', lang);
-  };
+  // No-op: language is fixed to English in this single-language build.
+  const setLanguage = (_lang: Language) => {};
 
   const setIsOperator = (op: boolean) => {
     setIsOperatorState(op);
     localStorage.setItem('lami_op_mode', String(op));
-    showToast(op ? 'Modo Operador Ativado' : 'Modo Cliente Ativado');
+    showToast(op ? 'Operator mode enabled' : 'Client mode enabled');
   };
 
   const toggleOperator = () => {
@@ -321,7 +317,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const resolveHandoff = (id: string, operatorResponse?: string) => {
     DataAdapter.resolveHandoff(id, operatorResponse);
     refreshData();
-    showToast('Solicitação respondida pelo Mimo!');
+    showToast('Request answered by Mimo!');
   };
 
   const navigateToCaseDetail = (caseId: string) => {
@@ -358,32 +354,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateBriefingText = (prose: I18nText) => {
     DataAdapter.updateBriefing(prose);
     refreshData();
-    showToast('Briefing atualizado!');
+    showToast('Briefing updated!');
   };
 
   const addTimelineUpdate = (caseId: string, content: I18nText, photos?: string[]) => {
     DataAdapter.addTimelineEntry(caseId, content, photos, 'operator');
     refreshData();
-    showToast('Atualização adicionada ao histórico!');
+    showToast('Update added to the timeline!');
   };
 
   const createNewCase = (newCaseData: any) => {
     const created = DataAdapter.createCase(newCaseData);
     refreshData();
     navigateToCaseDetail(created.id);
-    showToast('Novo caso criado!');
+    showToast('New case created!');
   };
 
   const updateCaseDetails = (caseItem: CaseItem) => {
     DataAdapter.updateCase(caseItem);
     refreshData();
-    showToast('Caso atualizado!');
+    showToast('Case updated!');
   };
 
   const resetAllData = () => {
     DataAdapter.resetToDefaultSeed();
     refreshData();
-    showToast('Dados restaurados para o padrão.');
+    showToast('Data restored to defaults.');
   };
 
   const exportJSON = () => {
@@ -394,7 +390,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     a.href = url;
     a.download = `lami-command-center-backup-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
-    showToast('Backup JSON exportado!');
+    showToast('JSON backup exported!');
   };
 
   const openImageModal = (url: string) => setSelectedImageModalUrl(url);

@@ -18,9 +18,7 @@ export const OperatorPanel: React.FC = () => {
   } = useApp();
 
   const [isEditingBriefing, setIsEditingBriefing] = useState(false);
-  const [briefingPT, setBriefingPT] = useState(briefing.prose.pt);
   const [briefingEN, setBriefingEN] = useState(briefing.prose.en);
-  const [briefingHE, setBriefingHE] = useState(briefing.prose.he);
 
   // State for Handoff queue management
   const [handoffTab, setHandoffTab] = useState<'pending' | 'resolved'>('pending');
@@ -29,11 +27,9 @@ export const OperatorPanel: React.FC = () => {
   if (!isOperator) return null;
 
   const handleSaveBriefing = () => {
-    updateBriefingText({
-      pt: briefingPT,
-      en: briefingEN,
-      he: briefingHE
-    });
+    // English-only build: store the English text across all locale fields so
+    // the (retained) I18nText shape stays consistent.
+    updateBriefingText({ pt: briefingEN, en: briefingEN, he: briefingEN });
     setIsEditingBriefing(false);
   };
 
@@ -106,7 +102,7 @@ export const OperatorPanel: React.FC = () => {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <span className="text-xs font-semibold text-[#B8912E] flex items-center gap-1.5">
             <Bell className="w-4 h-4 text-[#B8912E]" />
-            <span>Fila de Handoff (Dúvidas do Concierge AI)</span>
+            <span>Handoff Queue (Concierge AI questions)</span>
           </span>
 
           {/* Queue Filter Tabs */}
@@ -210,7 +206,7 @@ export const OperatorPanel: React.FC = () => {
               ))
             ) : (
               <p className="text-xs text-[#E2DDD5]/70 italic bg-black/10 p-3 rounded-xl border border-white/5">
-                Nenhuma solicitação pendente no momento. O Concierge respondeu todas as dúvidas com base nos dados.
+                No pending requests right now. The Concierge answered every question from the data.
               </p>
             )}
           </div>
@@ -266,37 +262,18 @@ export const OperatorPanel: React.FC = () => {
             onClick={() => setIsEditingBriefing(!isEditingBriefing)}
             className="text-xs text-white bg-[#145A52] hover:bg-[#1A7067] px-3 py-1 rounded-lg transition font-medium"
           >
-            {isEditingBriefing ? 'Cancelar' : 'Editar Trilingue'}
+            {isEditingBriefing ? 'Cancel' : 'Edit'}
           </button>
         </div>
 
         {isEditingBriefing ? (
           <div className="space-y-3 pt-2 text-xs">
             <div>
-              <label className="block text-[11px] text-[#E2DDD5] mb-1">🇧🇷 Português (Principal):</label>
-              <textarea
-                value={briefingPT}
-                onChange={(e) => setBriefingPT(e.target.value)}
-                rows={3}
-                className="w-full p-2.5 bg-[#F7F5F1] text-[#1C2826] rounded-xl border border-white/20 focus:outline-none font-sans"
-              />
-            </div>
-            <div>
-              <label className="block text-[11px] text-[#E2DDD5] mb-1">🇬🇧 English:</label>
+              <label className="block text-[11px] text-[#E2DDD5] mb-1">Today's briefing:</label>
               <textarea
                 value={briefingEN}
                 onChange={(e) => setBriefingEN(e.target.value)}
-                rows={3}
-                className="w-full p-2.5 bg-[#F7F5F1] text-[#1C2826] rounded-xl border border-white/20 focus:outline-none font-sans"
-              />
-            </div>
-            <div>
-              <label className="block text-[11px] text-[#E2DDD5] mb-1">🇮🇱 עברית (RTL):</label>
-              <textarea
-                value={briefingHE}
-                onChange={(e) => setBriefingHE(e.target.value)}
-                rows={3}
-                dir="rtl"
+                rows={4}
                 className="w-full p-2.5 bg-[#F7F5F1] text-[#1C2826] rounded-xl border border-white/20 focus:outline-none font-sans"
               />
             </div>
@@ -311,7 +288,7 @@ export const OperatorPanel: React.FC = () => {
           </div>
         ) : (
           <p className="text-xs text-[#E2DDD5] italic bg-black/10 p-3 rounded-xl border border-white/5">
-            "{briefing.prose[language] || briefing.prose.pt}"
+            "{briefing.prose.en}"
           </p>
         )}
       </div>
@@ -328,7 +305,7 @@ export const OperatorPanel: React.FC = () => {
 
         <button
           onClick={() => {
-            if (confirm('Deseja mesmo restaurar os dados para a versão seed original?')) {
+            if (confirm('Really restore all data to the original seed version?')) {
               resetAllData();
             }
           }}

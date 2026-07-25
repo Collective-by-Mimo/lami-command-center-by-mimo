@@ -54,7 +54,7 @@ const BILLS: BillRow[] = [
   {
     id: 'lootah',
     icon: <Flame className="w-5 h-5" />,
-    name: 'Lootah Gas · Gás Central',
+    name: 'Lootah Gas · Central Gas',
     detail: {
       pt: 'Central: 800 5224 · Suporte 24/7',
       en: 'Center: 800 5224 · 24/7 support',

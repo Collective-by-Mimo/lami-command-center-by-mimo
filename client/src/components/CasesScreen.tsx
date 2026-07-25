@@ -277,7 +277,7 @@ export const CasesScreen: React.FC = () => {
               className="bg-white rounded-2xl p-[18px] w-full max-w-sm shadow-[0_12px_40px_rgba(14,63,58,0.25)] space-y-4"
             >
               <div className="flex items-center justify-between">
-                <h3 className="font-serif-display text-[22px] text-[#0E3F3A]">Novo caso</h3>
+                <h3 className="font-serif-display text-[22px] text-[#0E3F3A]">New case</h3>
                 <button onClick={() => setShowNewCase(false)} className="p-1 text-[#6B7280]">
                   <X className="w-5 h-5" />
                 </button>
@@ -293,7 +293,7 @@ export const CasesScreen: React.FC = () => {
                 <input
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="Nome do caso"
+                  placeholder="Case name"
                   className="flex-1 h-11 rounded-xl border border-[#E2DDD5] px-3 text-[14px] focus:outline-none focus:border-[#145A52]"
                 />
               </div>
@@ -312,7 +312,7 @@ export const CasesScreen: React.FC = () => {
                 onClick={handleCreate}
                 className="w-full h-11 bg-[#145A52] text-white rounded-full text-[14px] font-semibold active:scale-[0.98] transition-transform"
               >
-                Criar caso
+                Create case
               </button>
             </motion.div>
           </motion.div>

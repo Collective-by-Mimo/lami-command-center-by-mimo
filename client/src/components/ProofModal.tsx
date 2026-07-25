@@ -26,7 +26,7 @@ export const ProofModal: React.FC = () => {
         <div className="p-2 bg-black flex items-center justify-center min-h-[300px] max-h-[80vh]">
           <img
             src={selectedImageModalUrl}
-            alt="Comprovante em alta resolução"
+            alt="High-resolution proof"
             className="max-h-[75vh] w-auto object-contain rounded-xl"
             referrerPolicy="no-referrer"
           />
@@ -34,7 +34,7 @@ export const ProofModal: React.FC = () => {
 
         <div className="p-4 bg-[#0E3F3A] text-white flex items-center justify-between text-xs">
           <span className="font-serif-display font-semibold text-[#B8912E]">
-            Comprovante Oficial de Operação · LaMi
+            Official Operation Proof · LaMi
           </span>
           <a
             href={selectedImageModalUrl}

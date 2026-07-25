@@ -390,7 +390,7 @@ export const FinanceScreen: React.FC = () => {
                       {isOperator && (
                         <button
                           onClick={() => deleteTransaction(tx.id)}
-                          aria-label="Excluir lançamento"
+                          aria-label="Delete transaction"
                           className="mt-1 text-[#999999] hover:text-red-700 transition-colors"
                         >
                           <Trash2 className="w-3.5 h-3.5" />

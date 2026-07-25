@@ -1,22 +1,14 @@
 /**
  * LaMi Header — 64px #0E3F3A, gold LM badge, "LaMi by Mimo's Collective",
- * flag-emoji language switcher (44px circles, gold ring active, spring tap),
- * 1px gold bottom border, backdrop blur on scroll.
+ * 1px gold bottom border, backdrop blur on scroll. English-only build.
  * Long-press logo 3s toggles operator mode.
  */
 import React, { useEffect, useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Language } from '../types';
 import { motion } from 'motion/react';
 
-const LANGS: { code: Language; emoji: string; label: string }[] = [
-  { code: 'pt', emoji: '🇧🇷', label: 'Português' },
-  { code: 'en', emoji: '🇬🇧', label: 'English' },
-  { code: 'he', emoji: '🇮🇱', label: 'עברית' }
-];
-
 export const Header: React.FC = () => {
-  const { language, setLanguage, toggleOperator, isOperator } = useApp();
+  const { toggleOperator, isOperator } = useApp();
   const [scrolled, setScrolled] = useState(false);
   const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -75,26 +67,6 @@ export const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Language switcher */}
-        <div className="flex items-center gap-1.5" dir="ltr">
-          {LANGS.map((lang) => {
-            const isActive = language === lang.code;
-            return (
-              <motion.button
-                key={lang.code}
-                onClick={() => setLanguage(lang.code)}
-                whileTap={{ scale: 1.15 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-                animate={{ scale: isActive ? 1 : 0.9, opacity: isActive ? 1 : 0.5 }}
-                className="w-11 h-11 rounded-full flex items-center justify-center text-[22px]"
-                style={isActive ? { boxShadow: '0 0 0 2.5px #B8912E' } : undefined}
-                aria-label={lang.label}
-              >
-                {lang.emoji}
-              </motion.button>
-            );
-          })}
-        </div>
       </div>
     </motion.header>
   );
