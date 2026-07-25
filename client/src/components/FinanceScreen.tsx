@@ -19,7 +19,8 @@ import {
   TrendingDown,
   RotateCcw,
   Trash2,
-  Paperclip
+  Paperclip,
+  Wallet
 } from 'lucide-react';
 
 const AED = (value: number, locale: string) =>
@@ -40,7 +41,7 @@ export const FinanceScreen: React.FC = () => {
   const locale = language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'pt-BR';
 
   const t = {
-    title: { pt: '💰 Finanças', en: '💰 Finance', he: '💰 כספים' }[language],
+    title: { pt: 'Finanças', en: 'Finance', he: 'כספים' }[language],
     subtitle: {
       pt: 'Registro de despesas, entradas e reembolsos em AED',
       en: 'Ledger of expenses, income and reimbursements in AED',
@@ -243,7 +244,10 @@ export const FinanceScreen: React.FC = () => {
       </div>
 
       <div>
-        <h1 className="font-serif-display text-[28px] text-[#0E3F3A]">{t.title}</h1>
+        <h1 className="font-serif-display text-[28px] text-[#0E3F3A] flex items-center gap-2.5">
+          <Wallet className="w-6 h-6 text-[#B8912E]" strokeWidth={1.75} />
+          {t.title}
+        </h1>
         <p className="text-[13px] text-[#6B7280] mt-1">{t.subtitle}</p>
       </div>
 
@@ -267,21 +271,21 @@ export const FinanceScreen: React.FC = () => {
 
       {/* Monthly summary cards */}
       <div className="grid grid-cols-3 gap-2.5">
-        <div className="bg-white rounded-2xl p-3 shadow-[0_2px_16px_rgba(14,63,58,0.08)]">
+        <div className="bg-white rounded-2xl p-3 border border-[#E7E1D5]">
           <TrendingUp className="w-4 h-4 text-[#145A52] mb-1.5" />
           <p className="text-[11px] text-[#6B7280]">{t.income}</p>
           <p className="font-mono text-[14px] font-bold text-[#145A52] leading-tight">
             {AED(summary.income, locale)}
           </p>
         </div>
-        <div className="bg-white rounded-2xl p-3 shadow-[0_2px_16px_rgba(14,63,58,0.08)]">
+        <div className="bg-white rounded-2xl p-3 border border-[#E7E1D5]">
           <TrendingDown className="w-4 h-4 text-red-700 mb-1.5" />
           <p className="text-[11px] text-[#6B7280]">{t.expenses}</p>
           <p className="font-mono text-[14px] font-bold text-red-700 leading-tight">
             {AED(summary.expense, locale)}
           </p>
         </div>
-        <div className="bg-white rounded-2xl p-3 shadow-[0_2px_16px_rgba(14,63,58,0.08)]">
+        <div className="bg-white rounded-2xl p-3 border border-[#E7E1D5]">
           <RotateCcw className="w-4 h-4 text-[#B8912E] mb-1.5" />
           <p className="text-[11px] text-[#6B7280]">{t.reimbursements}</p>
           <p className="font-mono text-[14px] font-bold text-[#B8912E] leading-tight">
@@ -338,7 +342,7 @@ export const FinanceScreen: React.FC = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.92 }}
                   transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-                  className="bg-white rounded-2xl px-4 py-3 shadow-[0_2px_16px_rgba(14,63,58,0.08)]"
+                  className="bg-white rounded-2xl px-4 py-3 border border-[#E7E1D5]"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">

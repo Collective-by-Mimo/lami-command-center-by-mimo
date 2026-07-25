@@ -125,7 +125,7 @@ export const CaseDetailScreen: React.FC = () => {
           hapticTap();
           setCurrentView('cases');
         }}
-        className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#145A52] bg-white px-3.5 py-2 rounded-full shadow-[0_2px_10px_rgba(14,63,58,0.06)] active:scale-[0.97] transition-transform"
+        className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#145A52] bg-white px-3.5 py-2 rounded-full border border-[#E7E1D5] active:scale-[0.97] transition-transform"
       >
         <ArrowLeft className={`w-3.5 h-3.5 ${isRTL ? 'rotate-180' : ''}`} />
         <span>{getTranslation('backToCases', language)}</span>

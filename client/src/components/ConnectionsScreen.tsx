@@ -5,7 +5,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { CONNECTION_PROVIDERS } from '../config/appConfig';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Link2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { hapticTap } from '../utils/haptics';
 
@@ -13,7 +13,7 @@ export const ConnectionsScreen: React.FC = () => {
   const { language, setCurrentView, isRTL } = useApp();
 
   const t = {
-    title: { pt: '🔗 Conexões', en: '🔗 Connections', he: '🔗 חיבורים' }[language],
+    title: { pt: 'Conexões', en: 'Connections', he: 'חיבורים' }[language],
     subtitle: {
       pt: 'Atalhos para os portais oficiais — sem credenciais armazenadas',
       en: 'Shortcuts to official portals — no credentials stored',
@@ -30,14 +30,17 @@ export const ConnectionsScreen: React.FC = () => {
           hapticTap();
           setCurrentView('briefing');
         }}
-        className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#145A52] bg-white px-3.5 py-2 rounded-full shadow-[0_2px_10px_rgba(14,63,58,0.06)] active:scale-[0.97] transition-transform"
+        className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#145A52] bg-white px-3.5 py-2 rounded-full border border-[#E7E1D5] active:scale-[0.97] transition-transform"
       >
         <ArrowLeft className={`w-3.5 h-3.5 ${isRTL ? 'rotate-180' : ''}`} />
         <span>{t.back}</span>
       </button>
 
       <div>
-        <h1 className="font-serif-display text-[28px] text-[#0E3F3A]">{t.title}</h1>
+        <h1 className="font-serif-display text-[28px] text-[#0E3F3A] flex items-center gap-2.5">
+          <Link2 className="w-6 h-6 text-[#B8912E]" strokeWidth={1.75} />
+          {t.title}
+        </h1>
         <p className="text-[13px] text-[#6B7280] mt-1">{t.subtitle}</p>
       </div>
 
@@ -52,7 +55,7 @@ export const ConnectionsScreen: React.FC = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.05 * idx, ease: [0.23, 1, 0.32, 1] }}
-            className="bg-white rounded-2xl p-4 shadow-[0_2px_16px_rgba(14,63,58,0.08)] space-y-3 active:scale-[0.98] transition-transform group"
+            className="bg-white rounded-2xl p-4 border border-[#E7E1D5] space-y-3 active:scale-[0.98] transition-transform group"
           >
             <span
               className="inline-flex items-center px-3 py-1.5 rounded-lg font-sans font-bold text-[15px] tracking-wide"

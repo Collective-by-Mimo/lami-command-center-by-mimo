@@ -124,7 +124,7 @@ export const CasesScreen: React.FC = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={searchPlaceholder}
-          className={`w-full h-11 rounded-full bg-white shadow-[0_2px_10px_rgba(14,63,58,0.06)] text-[14px] placeholder:text-[#9AA3A0] focus:outline-none focus:ring-2 focus:ring-[#145A52]/30 ${
+          className={`w-full h-11 rounded-full bg-white border border-[#E7E1D5] text-[14px] placeholder:text-[#9AA3A0] focus:outline-none focus:ring-2 focus:ring-[#145A52]/30 ${
             isRTL ? 'pr-11 pl-4' : 'pl-11 pr-4'
           }`}
         />

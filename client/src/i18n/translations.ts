@@ -117,9 +117,9 @@ export const UI_STRINGS = {
     he: 'אושר בהצלחה. מימו ימשיך בטיפול מיד.'
   },
   utilitiesTitle: {
-    pt: '📞 Suas Contas e Utilidades',
-    en: '📞 Your Bills & Utilities',
-    he: '📞 החשבונות והשירותים שלך'
+    pt: 'Suas Contas e Utilidades',
+    en: 'Your Bills & Utilities',
+    he: 'החשבונות והשירותים שלך'
   },
   utilitiesSub: {
     pt: 'Acesso rápido a números de conta e contatos operacionais diretos',
@@ -142,9 +142,9 @@ export const UI_STRINGS = {
     he: 'התקשר עכשיו'
   },
   securityNotice: {
-    pt: '🔒 Ambiente Seguro: Seus documentos pessoais e Emirates ID estão protegidos e não são exibidos nesta plataforma por diretriz de segurança.',
-    en: '🔒 Secure Environment: Personal documents and Emirates ID are strictly protected and never displayed here by safety policy.',
-    he: '🔒 סביבה מאובטחת: מסמכים אישיים ו-Emirates ID מוגנים ואינם מוצגים ביישום זה מטעמי אבטחה.'
+    pt: 'Ambiente Seguro: Seus documentos pessoais e Emirates ID estão protegidos e não são exibidos nesta plataforma por diretriz de segurança.',
+    en: 'Secure Environment: Personal documents and Emirates ID are strictly protected and never displayed here by safety policy.',
+    he: 'סביבה מאובטחת: מסמכים אישיים ו-Emirates ID מוגנים ואינם מוצגים ביישום זה מטעמי אבטחה.'
   },
   searchPlaceholder: {
     pt: 'Pesquisar casos por nome, código ou assunto...',

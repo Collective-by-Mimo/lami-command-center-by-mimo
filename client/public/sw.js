@@ -1,5 +1,8 @@
-const CACHE_NAME = 'lami-command-center-v2';
-const DYNAMIC_CACHE_NAME = 'lami-dynamic-v2';
+// Bump these on every release that ships new UI so the `activate` handler
+// purges the previous caches — otherwise a returning PWA can serve a stale
+// bundle and appear to be "missing" newly shipped features.
+const CACHE_NAME = 'lami-command-center-v3';
+const DYNAMIC_CACHE_NAME = 'lami-dynamic-v3';
 
 const STATIC_ASSETS = [
   '/',
