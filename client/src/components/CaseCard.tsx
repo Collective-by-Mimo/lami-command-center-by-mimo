@@ -2,7 +2,9 @@ import React from 'react';
 import { CaseItem } from '../types';
 import { useApp } from '../context/AppContext';
 import { getTranslation } from '../i18n/translations';
-import { ArrowRight, Clock, Repeat, AlertCircle } from 'lucide-react';
+import { ArrowRight, Clock, Repeat, AlertCircle, MessageCircle } from 'lucide-react';
+import { openMimoCaseWhatsApp } from '../services/whatsapp';
+import { hapticTap } from '../utils/haptics';
 
 interface CaseCardProps {
   caseItem: CaseItem;
@@ -58,6 +60,18 @@ export const CaseCard: React.FC<CaseCardProps> = ({ caseItem, onClick }) => {
 
         {/* Right Status Pill */}
         <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              hapticTap();
+              openMimoCaseWhatsApp(titleText, language);
+            }}
+            aria-label="WhatsApp Mimo"
+            className="w-8 h-8 rounded-full bg-[#25D366] text-white flex items-center justify-center active:scale-90 transition-transform shadow-[0_2px_8px_rgba(37,211,102,0.35)]"
+          >
+            <MessageCircle className="w-4 h-4" />
+          </button>
+
           {isInProgress ? (
             <span className="text-xs bg-[#145A52]/10 text-[#145A52] font-medium px-2.5 py-1 rounded-full border border-[#145A52]/20 flex items-center gap-1">
               {chipLabels.inProgress}
