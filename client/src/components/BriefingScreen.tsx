@@ -217,12 +217,32 @@ export const BriefingScreen: React.FC = () => {
         )}
       </motion.section>
 
-      {/* G — Quick access: Take me home + Contacts/Connections tiles */}
+      {/* G — Quick access: Services catalogue + Take me home + Contacts/Connections tiles */}
       <motion.section {...sectionAnim(0.32)} className="space-y-3">
         <h2 className="font-serif-display text-[18px] text-[#0E3F3A]">
           <span className="text-[#B8912E]">— </span>
           {t.quickAccess}
         </h2>
+
+        <button
+          onClick={() => {
+            hapticTap();
+            setCurrentView('services');
+          }}
+          className="w-full text-start bg-gradient-to-br from-[#145A52] to-[#0E3F3A] text-white rounded-2xl p-[16px] active:scale-[0.99] transition-transform"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-serif-display text-[18px] font-semibold leading-tight">
+                {{ pt: 'Serviços', en: 'Services', he: 'שירותים' }[language]}
+              </p>
+              <p className="text-[12px] text-[#CFE3DE] mt-0.5">
+                {{ pt: 'Tudo o que cuidamos — o catálogo completo', en: 'Everything we handle — the full catalogue', he: 'כל מה שאנחנו מטפלים — הקטלוג המלא' }[language]}
+              </p>
+            </div>
+            <ChevronRight className={`w-4 h-4 text-[#B8912E] shrink-0 ${isRTL ? 'rotate-180' : ''}`} />
+          </div>
+        </button>
 
         <a
           href={HOME_CONFIG.mapsUrl}

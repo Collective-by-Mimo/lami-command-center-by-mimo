@@ -123,7 +123,8 @@ export type ViewMode =
   | 'utilities'
   | 'contacts'
   | 'connections'
-  | 'finance';
+  | 'finance'
+  | 'services';
 
 export type TransactionType = 'income' | 'expense' | 'reimbursement';
 
