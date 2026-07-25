@@ -99,11 +99,12 @@
 }
 
 /* ---------- Card standard ---------- */
+/* Quiet-luxury surface: a warm 1px hairline instead of a heavy drop shadow. */
 .lami-card {
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 2px 16px rgba(14, 63, 58, 0.08);
-  padding: 18px;
+  border: 1px solid #e7e1d5;
+  padding: 22px;
 }
 
 /* ---------- Operator mode gold frame ---------- */

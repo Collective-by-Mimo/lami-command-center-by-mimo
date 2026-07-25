@@ -6,7 +6,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { getTranslation } from '../i18n/translations';
-import { Copy, PhoneCall, ShieldCheck, Zap, Flame, Snowflake, Wifi } from 'lucide-react';
+import { Copy, PhoneCall, ShieldCheck, Zap, Flame, Snowflake, Wifi, Receipt, Search, Check } from 'lucide-react';
 import { motion } from 'motion/react';
 import { hapticTap } from '../utils/haptics';
 
@@ -35,7 +35,7 @@ const BILLS: BillRow[] = [
     copyValue: '2060863309',
     copyLabel: 'DEWA',
     status: 'autopay',
-    statusText: { pt: '✓ Débito automático', en: '✓ Auto-pay', he: '✓ חיוב אוטומטי' }
+    statusText: { pt: 'Débito automático', en: 'Auto-pay', he: 'חיוב אוטומטי' }
   },
   {
     id: 'tasleem',
@@ -49,7 +49,7 @@ const BILLS: BillRow[] = [
     copyValue: '2144145',
     copyLabel: 'Tasleem',
     status: 'investigating',
-    statusText: { pt: '🔍 Em investigação', en: '🔍 Investigating', he: '🔍 בבדיקה' }
+    statusText: { pt: 'Em investigação', en: 'Investigating', he: 'בבדיקה' }
   },
   {
     id: 'lootah',
@@ -61,7 +61,7 @@ const BILLS: BillRow[] = [
       he: 'מוקד: 800 5224 · תמיכה 24/7'
     },
     status: 'ok',
-    statusText: { pt: '✓ Em dia', en: '✓ Up to date', he: '✓ מעודכן' },
+    statusText: { pt: 'Em dia', en: 'Up to date', he: 'מעודכן' },
     phone: '+97158 592 9669'
   },
   {
@@ -74,7 +74,7 @@ const BILLS: BillRow[] = [
       he: 'מנוי ניקיון שבועי · ימי חמישי, 9:00'
     },
     status: 'autopay',
-    statusText: { pt: '✓ Assinatura ativa', en: '✓ Subscription active', he: '✓ מנוי פעיל' }
+    statusText: { pt: 'Assinatura ativa', en: 'Subscription active', he: 'מנוי פעיל' }
   }
 ];
 
@@ -91,10 +91,11 @@ export const UtilitiesPanel: React.FC = () => {
     <div className="space-y-4 pb-28 pt-6 px-4">
       {/* Panel Header */}
       <div>
-        <h1 className="font-serif-display text-[28px] text-[#0E3F3A]">
+        <h1 className="font-serif-display text-[28px] text-[#0E3F3A] flex items-center gap-2.5">
+          <Receipt className="w-6 h-6 text-[#B8912E]" strokeWidth={1.75} />
           {getTranslation('utilitiesTitle', language)}
         </h1>
-        <p className="text-[13px] text-[#6B7280]">{getTranslation('utilitiesSub', language)}</p>
+        <p className="text-[13px] text-[#6B7280] mt-0.5">{getTranslation('utilitiesSub', language)}</p>
       </div>
 
       {/* Utility cards */}
@@ -105,7 +106,7 @@ export const UtilitiesPanel: React.FC = () => {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08 * i, duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
-            className={`bg-white rounded-[16px] px-4 py-[14px] shadow-[0_2px_16px_rgba(14,63,58,0.08)] flex flex-col gap-3 ${
+            className={`bg-white rounded-[16px] px-4 py-[14px] border border-[#E7E1D5] flex flex-col gap-3 ${
               isRTL ? 'border-r-4 border-r-[#7B9E87]' : 'border-l-4 border-l-[#7B9E87]'
             }`}
           >
@@ -123,12 +124,17 @@ export const UtilitiesPanel: React.FC = () => {
 
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <span
-                className={`text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1 ${
+                className={`text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1.5 ${
                   bill.status === 'investigating'
                     ? 'bg-[#FBF6E8] text-[#B8912E] border border-[#B8912E]/40 lami-status-pulse'
                     : 'bg-[#EEF7F5] text-[#145A52] border border-[#145A52]/20'
                 }`}
               >
+                {bill.status === 'investigating' ? (
+                  <Search className="w-3 h-3" strokeWidth={2.25} />
+                ) : (
+                  <Check className="w-3 h-3" strokeWidth={2.5} />
+                )}
                 {bill.statusText[language]}
               </span>
 

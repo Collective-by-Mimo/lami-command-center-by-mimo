@@ -37,7 +37,7 @@ export const CaseCard: React.FC<CaseCardProps> = ({ caseItem, onClick }) => {
   return (
     <div
       onClick={onClick}
-      className={`bg-white rounded-[16px] px-4 py-[14px] shadow-[0_2px_16px_rgba(14,63,58,0.08)] transition-all cursor-pointer hover:shadow-md active:scale-[0.99] relative overflow-hidden group ${borderAccentClass} ${
+      className={`bg-white rounded-[16px] px-4 py-[14px] border border-[#E7E1D5] transition-all cursor-pointer hover:shadow-md active:scale-[0.99] relative overflow-hidden group ${borderAccentClass} ${
         isCompleted ? 'opacity-75' : ''
       }`}
     >

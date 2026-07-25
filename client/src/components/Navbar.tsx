@@ -25,7 +25,7 @@ export const Navbar: React.FC = () => {
   const hasPending = cases.some(c => c.clientState === '🔔 Aguardando você');
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 h-[72px] pb-safe bg-white border-t border-[#F0EDED] flex items-center justify-around shadow-[0_-4px_20px_rgba(14,63,58,0.08)] z-50">
+    <nav className="fixed bottom-0 left-0 right-0 h-[72px] pb-safe bg-white border-t border-[#E7E1D5] flex items-center justify-around z-50">
       {navItems.map((item) => {
         const isActive = currentView === item.id || (currentView === 'caseDetail' && item.id === 'cases');
         

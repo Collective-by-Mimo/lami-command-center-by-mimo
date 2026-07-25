@@ -7,7 +7,7 @@
  * boundary they belong to.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { X, Send } from 'lucide-react';
+import { X, Send, BellRing } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { AnimatePresence, motion } from 'motion/react';
 import { hapticTap } from '../utils/haptics';
@@ -77,11 +77,11 @@ export const ConciergeAI: React.FC = () => {
           hapticTap();
           setIsOpen(true);
         }}
-        className={`fixed bottom-24 ${isRTL ? 'right-5' : 'left-5'} w-[52px] h-[52px] bg-[#0E3F3A] rounded-full flex items-center justify-center z-40 text-[22px]`}
-        style={{ boxShadow: '0 4px 20px rgba(14,63,58,0.4), 0 0 0 2px rgba(184,145,46,0.5)' }}
+        className={`fixed bottom-24 ${isRTL ? 'right-5' : 'left-5'} w-[52px] h-[52px] bg-[#0E3F3A] rounded-full flex items-center justify-center z-40`}
+        style={{ boxShadow: '0 4px 16px rgba(14,63,58,0.28), 0 0 0 1.5px rgba(184,145,46,0.55)' }}
         aria-label="Concierge"
       >
-        🛎️
+        <BellRing className="w-[22px] h-[22px] text-[#B8912E]" strokeWidth={1.75} />
       </motion.button>
 
       <AnimatePresence>
@@ -105,7 +105,9 @@ export const ConciergeAI: React.FC = () => {
               {/* Chat header */}
               <div className="bg-[#0E3F3A] text-white px-5 py-4 flex items-center justify-between border-b border-[#B8912E]">
                 <div className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-[#B8912E] flex items-center justify-center text-lg">🛎️</span>
+                  <span className="w-10 h-10 rounded-full bg-[#B8912E] flex items-center justify-center">
+                    <BellRing className="w-5 h-5 text-white" strokeWidth={1.75} />
+                  </span>
                   <div>
                     <h2 className="font-serif-display italic text-[20px] leading-tight">Concierge LaMi</h2>
                     <p className="text-[11px] text-[#CFE3DE]">
@@ -120,7 +122,7 @@ export const ConciergeAI: React.FC = () => {
 
               {/* Messages */}
               <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-                <div className="bg-white rounded-2xl p-3.5 text-[14px] text-[#2C2C2C] shadow-[0_2px_10px_rgba(14,63,58,0.06)] max-w-[85%]">
+                <div className="bg-white rounded-2xl p-3.5 text-[14px] text-[#2C2C2C] border border-[#E7E1D5] max-w-[85%]">
                   <span className="font-serif-display italic text-[15px]">{GREETINGS[language]}</span>
                 </div>
 
@@ -130,7 +132,7 @@ export const ConciergeAI: React.FC = () => {
                       <button
                         key={chip}
                         onClick={() => send(chip)}
-                        className="px-3.5 py-2 bg-white rounded-full text-[13px] text-[#145A52] font-medium shadow-[0_1px_6px_rgba(14,63,58,0.08)] border border-[#145A52]/15 active:scale-[0.96] transition-transform"
+                        className="px-3.5 py-2 bg-white rounded-full text-[13px] text-[#145A52] font-medium border border-[#E7E1D5] border border-[#145A52]/15 active:scale-[0.96] transition-transform"
                       >
                         {chip}
                       </button>
@@ -147,7 +149,7 @@ export const ConciergeAI: React.FC = () => {
                     className={`p-3.5 rounded-2xl text-[14px] leading-[1.6] max-w-[85%] whitespace-pre-wrap ${
                       m.role === 'user'
                         ? `bg-[#145A52] text-white ${isRTL ? 'mr-auto' : 'ml-auto'}`
-                        : `bg-white text-[#2C2C2C] shadow-[0_2px_10px_rgba(14,63,58,0.06)] ${isRTL ? 'ml-auto border-r-[3px] border-r-[#B8912E]' : 'mr-auto border-l-[3px] border-l-[#B8912E]'}`
+                        : `bg-white text-[#2C2C2C] border border-[#E7E1D5] ${isRTL ? 'ml-auto border-r-[3px] border-r-[#B8912E]' : 'mr-auto border-l-[3px] border-l-[#B8912E]'}`
                     }`}
                   >
                     {m.text}
@@ -155,7 +157,7 @@ export const ConciergeAI: React.FC = () => {
                 ))}
 
                 {isTyping && (
-                  <div className={`bg-white rounded-2xl px-4 py-3 shadow-[0_2px_10px_rgba(14,63,58,0.06)] w-fit flex items-center gap-1.5 ${isRTL ? 'ml-auto' : 'mr-auto'}`}>
+                  <div className={`bg-white rounded-2xl px-4 py-3 border border-[#E7E1D5] w-fit flex items-center gap-1.5 ${isRTL ? 'ml-auto' : 'mr-auto'}`}>
                     <span className="lami-typing-dot w-2 h-2 rounded-full bg-[#B8912E] inline-block" />
                     <span className="lami-typing-dot w-2 h-2 rounded-full bg-[#B8912E] inline-block" />
                     <span className="lami-typing-dot w-2 h-2 rounded-full bg-[#B8912E] inline-block" />
