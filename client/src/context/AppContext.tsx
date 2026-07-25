@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Language, ViewMode, CaseItem, BriefingData, UtilityItem, KeyDateItem, HandoffItem, I18nText } from '../types';
+import { Language, ViewMode, CaseItem, BriefingData, UtilityItem, KeyDateItem, HandoffItem, I18nText, FinanceTransaction } from '../types';
 import { DataAdapter } from '../services/dataAdapter';
 import { isHapticsEnabled, setHapticsEnabled, hapticSuccess, hapticTap } from '../utils/haptics';
 
@@ -50,6 +50,10 @@ interface AppContextType {
   logout: () => void;
   isBiometricEnabled: boolean;
   toggleBiometric: () => void;
+  transactions: FinanceTransaction[];
+  addTransaction: (tx: Omit<FinanceTransaction, 'id'>) => void;
+  updateTransaction: (tx: FinanceTransaction) => void;
+  deleteTransaction: (id: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -63,7 +67,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [isOperator, setIsOperatorState] = useState<boolean>(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('op') === '1') return true;
+    if (urlParams.get('op') === '1' || urlParams.get('operator') === '1') return true;
     return localStorage.getItem('lami_op_mode') === 'true';
   });
 
@@ -77,6 +81,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [utilities, setUtilities] = useState<UtilityItem[]>(() => DataAdapter.getUtilities());
   const [keyDates, setKeyDates] = useState<KeyDateItem[]>(() => DataAdapter.getKeyDates());
   const [handoffs, setHandoffs] = useState<HandoffItem[]>(() => DataAdapter.getHandoffs());
+  const [transactions, setTransactions] = useState<FinanceTransaction[]>(() => DataAdapter.getTransactions());
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [selectedImageModalUrl, setSelectedImageModalUrl] = useState<string | null>(null);
@@ -99,6 +104,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('lami_biometric', String(next));
   };
 
+  // AUTH: Supabase multi-user — Phase 2 integration point.
+  // Single shared credential + ?operator=1 toggle stay until real auth lands.
   const login = (user: string, pass: string): boolean => {
     if (user.trim() === 'Layla_Portal' && pass === '@Mimo2026') {
       setIsAuthenticated(true);
@@ -233,6 +240,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUtilities(DataAdapter.getUtilities());
     setKeyDates(DataAdapter.getKeyDates());
     setHandoffs(DataAdapter.getHandoffs());
+    setTransactions(DataAdapter.getTransactions());
+  };
+
+  const addTransaction = (tx: Omit<FinanceTransaction, 'id'>) => {
+    DataAdapter.addTransaction(tx);
+    refreshData();
+    showToast(
+      language === 'pt' ? 'Lançamento registrado!' :
+      language === 'en' ? 'Transaction recorded!' :
+      'התנועה נרשמה!'
+    );
+  };
+
+  const updateTransaction = (tx: FinanceTransaction) => {
+    DataAdapter.updateTransaction(tx);
+    refreshData();
+  };
+
+  const deleteTransaction = (id: string) => {
+    DataAdapter.deleteTransaction(id);
+    refreshData();
+    showToast(
+      language === 'pt' ? 'Lançamento removido.' :
+      language === 'en' ? 'Transaction removed.' :
+      'התנועה הוסרה.'
+    );
   };
 
   const showToast = (msg: string) => {
@@ -399,7 +432,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         login,
         logout,
         isBiometricEnabled,
-        toggleBiometric
+        toggleBiometric,
+        transactions,
+        addTransaction,
+        updateTransaction,
+        deleteTransaction
       }}
     >
       {children}

@@ -224,6 +224,11 @@ export default defineConfig({
     port: 3000,
     strictPort: false, // Will find next available port if 3000 is busy
     host: true,
+    // Dev-mode API: `npm run dev:server` runs the Express API on 3001;
+    // this proxy keeps /api same-origin so Concierge & Finance work in dev
+    proxy: {
+      "/api": "http://localhost:3001",
+    },
     allowedHosts: [
       ".manuspre.computer",
       ".manus.computer",

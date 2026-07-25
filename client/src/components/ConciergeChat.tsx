@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Bell, Send, X, Sparkles, User, Check, AlertCircle, MessageSquare } from 'lucide-react';
 import { hapticTap, hapticSuccess, hapticWarning } from '../utils/haptics';
+import { askConcierge, buildGroundingData } from '../services/concierge';
 
 interface ChatMessage {
   id: string;
@@ -88,67 +89,30 @@ export const ConciergeChat: React.FC = () => {
     if (!textToSend) setInput('');
     setIsLoading(true);
 
-    try {
-      const response = await fetch('/api/concierge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: query,
-          language,
-          appData: {
-            cases,
-            briefing,
-            utilities,
-            keyDates
-          }
-        })
-      });
+    // Sanitized snapshot only — internal fields and account numbers never leave the app
+    const groundingData = buildGroundingData(cases, utilities, keyDates, briefing, language);
+    const { reply, fallback } = await askConcierge(query, language, groundingData);
+    const botMsgTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-      const data = await response.json();
-      const botMsgTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (fallback) {
+      hapticWarning();
+      // Concierge could not answer — log to the operator handoff queue
+      addHandoff(query);
+    } else {
+      hapticSuccess();
+    }
 
-      if (data.requiresHandoff) {
-        hapticWarning();
-        // Log to operator handoff queue
-        addHandoff(query);
-      } else {
-        hapticSuccess();
-      }
-
-      const botMsg: ChatMessage = {
+    setMessages((prev) => [
+      ...prev,
+      {
         id: `bot-${Date.now()}`,
         sender: 'concierge',
-        text: data.reply || 'Vou passar isso ao Mimo agora mesmo 🛎️',
+        text: reply,
         timestamp: botMsgTime,
-        requiresHandoff: data.requiresHandoff,
-        confirmedByMimo: data.confirmedByMimo
-      };
-
-      setMessages((prev) => [...prev, botMsg]);
-
-    } catch (err) {
-      console.error('Concierge API fetch failed:', err);
-      const fallbackText = {
-        pt: 'O concierge está indisponível no momento — chame o Mimo no WhatsApp 💬',
-        en: 'The concierge is currently unavailable — please contact Mimo on WhatsApp 💬',
-        he: 'שירות הקונסיירז׳ אינו זמין כעת — אנא צרי קשר עם מימו ב-WhatsApp 💬'
-      }[language];
-
-      addHandoff(query);
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `bot-err-${Date.now()}`,
-          sender: 'concierge',
-          text: fallbackText,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          requiresHandoff: true
-        }
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
+        requiresHandoff: fallback
+      }
+    ]);
+    setIsLoading(false);
   };
 
   const titleText = {
@@ -255,9 +219,10 @@ export const ConciergeChat: React.FC = () => {
               ))}
 
               {isLoading && (
-                <div className="flex items-center gap-2 text-xs text-[#62726F] italic p-2 bg-white/60 rounded-xl max-w-xs border border-[#E2DDD5]">
-                  <Sparkles className="w-4 h-4 animate-spin text-[#B8912E]" />
-                  <span>Consultando dados executivos...</span>
+                <div className="bg-white rounded-2xl px-4 py-3 border border-[#E2DDD5] w-fit flex items-center gap-1.5">
+                  <span className="lami-typing-dot w-2 h-2 rounded-full bg-[#B8912E] inline-block" />
+                  <span className="lami-typing-dot w-2 h-2 rounded-full bg-[#B8912E] inline-block" />
+                  <span className="lami-typing-dot w-2 h-2 rounded-full bg-[#B8912E] inline-block" />
                 </div>
               )}
 

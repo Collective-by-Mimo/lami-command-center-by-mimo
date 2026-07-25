@@ -115,4 +115,27 @@ export interface HandoffItem {
   resolvedAt?: string;
 }
 
-export type ViewMode = 'briefing' | 'cases' | 'caseDetail' | 'archive' | 'utilities';
+export type ViewMode =
+  | 'briefing'
+  | 'cases'
+  | 'caseDetail'
+  | 'archive'
+  | 'utilities'
+  | 'contacts'
+  | 'connections'
+  | 'finance';
+
+export type TransactionType = 'income' | 'expense' | 'reimbursement';
+
+export type TransactionStatus = 'pending' | 'confirmed' | 'reimbursed';
+
+export interface FinanceTransaction {
+  id: string;
+  date: string; // "YYYY-MM-DD"
+  description: string;
+  category: string; // FINANCE_CATEGORIES id
+  amountAED: number;
+  type: TransactionType;
+  status: TransactionStatus;
+  receiptBase64?: string; // TODO cloud storage — base64 in localStorage for Phase 1 only
+}

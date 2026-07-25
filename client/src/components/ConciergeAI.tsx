@@ -1,14 +1,17 @@
 /**
  * LaMi Concierge — 🛎️ floating button (dark teal, gold ring pulse), slide-up
  * sheet chat. Answers ONLY from app data (cases, bills, key dates, briefing)
- * in Layla's active language, warm première-classe tone. Uses the built-in
- * Manus LLM proxy directly from the frontend.
+ * in Layla's active language, warm première-classe tone. Calls the secure
+ * server-side Gemini endpoint (POST /api/concierge) with a sanitized
+ * grounding payload — no keys or internal fields ever leave the server/client
+ * boundary they belong to.
  */
 import React, { useEffect, useRef, useState } from 'react';
 import { X, Send } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { AnimatePresence, motion } from 'motion/react';
 import { hapticTap } from '../utils/haptics';
+import { askConcierge, buildGroundingData } from '../services/concierge';
 
 interface ChatMsg {
   role: 'user' | 'ai';
@@ -32,7 +35,7 @@ export const ConciergeAI: React.FC = () => {
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const { language, cases, briefing, keyDates, isRTL } = useApp();
+  const { language, cases, briefing, utilities, keyDates, isRTL } = useApp();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,121 +43,6 @@ export const ConciergeAI: React.FC = () => {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isTyping, isOpen]);
-
-  const buildContext = () => {
-    const caseLines = cases.map((c) => {
-      const parts = [
-        `• ${c.emoji} ${c.title.pt} — estado: ${c.clientState}; próximo passo: ${c.nextStep?.pt || '—'}`
-      ];
-      if (c.quotations?.length) {
-        parts.push(
-          `  Orçamentos: ${c.quotations.map((q) => `${q.title.pt} ${q.priceAED} AED${q.isRecommended ? ' (recomendado)' : ''}`).join(' | ')}`
-        );
-      }
-      if (c.completionProof) parts.push(`  Concluído em ${c.completionProof.completedAt}`);
-      return parts.join('\n');
-    });
-    const dateLines = keyDates
-      .filter((k) => k.status !== 'dismissed')
-      .map((k) => `• ${k.date}: ${k.label.pt} (${k.category})`);
-    return [
-      `BRIEFING DE HOJE: ${briefing.prose.pt}`,
-      `CASOS (${cases.length}):`,
-      ...caseLines,
-      'DATAS-CHAVE:',
-      ...dateLines,
-      'CONTAS: DEWA conta 2060863309 (débito automático ativo); Tasleem cliente 2144145 (crédito de -3.216 AED em investigação); Lootah Gas central 800 5224 / +97158 592 9669; Just Life limpeza semanal quintas 9h.'
-    ].join('\n');
-  };
-
-  /**
-   * Local knowledge-base answer engine (fallback when the LLM endpoint is
-   * unreachable from a static deployment). Answers from live app state in
-   * the active language with the same première-classe tone.
-   */
-  const localAnswer = (q: string): string => {
-    const query = q.toLowerCase();
-    const L = language;
-    const t = (pt: string, en: string, he: string) => ({ pt, en, he }[L]);
-    const caseTitle = (c: (typeof cases)[number]) => c.title[L] || c.title.pt;
-
-    const pending = cases.filter((c) => c.clientState === '🔔 Aguardando você');
-    const active = cases.filter((c) => c.clientState === '✅ Em nossas mãos');
-    const done = cases.filter((c) => c.clientState === '✔️ Concluído');
-
-    // Specific case lookup (bag, chanel, vuitton, laundry, leak, lease...)
-    const keywords: [string[], string | undefined][] = [
-      [['chanel', 'vuitton', 'bolsa', 'bag', 'תיק שאנל'], cases.find((c) => /chanel|vuitton|bolsa|bag/i.test(c.title.pt + c.title.en))?.id],
-      [['lavander', 'laundry', 'roupa', 'כביסה'], cases.find((c) => /lavander|laundry/i.test(c.title.pt + c.title.en))?.id],
-      [['vazamento', 'leak', 'banheiro', 'נזילה'], cases.find((c) => /vazamento|leak/i.test(c.title.pt + c.title.en))?.id],
-      [['contrato', 'lease', 'aluguel', 'חוזה'], cases.find((c) => /lease|contrato/i.test(c.title.pt + c.title.en))?.id],
-      [['tasleem', 'טסלים'], cases.find((c) => /tasleem/i.test(c.title.pt + c.title.en))?.id]
-    ];
-    for (const [words, id] of keywords) {
-      if (id && words.some((w) => query.includes(w))) {
-        const c = cases.find((x) => x.id === id)!;
-        const next = c.nextStep?.[L] || c.nextStep?.pt;
-        return t(
-          `Sobre "${caseTitle(c)}": o estado atual é ${c.clientState}. ${next ? `Próximo passo: ${next}.` : ''} Estamos cuidando de tudo para você. 🌸`,
-          `Regarding "${caseTitle(c)}": the current state is ${c.clientState}. ${next ? `Next step: ${next}.` : ''} We are taking care of everything for you. 🌸`,
-          `לגבי "${caseTitle(c)}": המצב הנוכחי הוא ${c.clientState}. ${next ? `הצעד הבא: ${next}.` : ''} אנחנו מטפלים בהכל בשבילך. 🌸`
-        );
-      }
-    }
-
-    // Pending / awaiting
-    if (/pendente|pending|aguard|awaiting|ממתין|מה יש/.test(query)) {
-      if (pending.length === 0)
-        return t(
-          'Nada aguarda sua decisão neste momento — está tudo em nossas mãos. 🌸',
-          'Nothing awaits your decision right now — everything is in our hands. 🌸',
-          'שום דבר לא ממתין להחלטתך כרגע — הכל בידיים שלנו. 🌸'
-        );
-      const list = pending.map((c) => `${c.emoji} ${caseTitle(c)}`).join(', ');
-      return t(
-        `Aguardando sua aprovação: ${list}. Basta abrir o caso e escolher — o resto é conosco. 🌸`,
-        `Awaiting your approval: ${list}. Simply open the case and choose — we handle the rest. 🌸`,
-        `ממתין לאישורך: ${list}. פשוט פתחי את התיק ובחרי — השאר עלינו. 🌸`
-      );
-    }
-
-    // Bills / utilities
-    if (/conta|bill|dewa|gas|lootah|utilit|fatura|חשבון/.test(query)) {
-      return t(
-        'Suas contas: DEWA está em débito automático (conta 2060863309). A Tasleem mostra um crédito de 3.216,08 AED a seu favor — estamos confirmando por telefone. O gás Lootah e a limpeza Just Life seguem em dia. Tudo sob controle. 🌸',
-        'Your bills: DEWA is on autopay (account 2060863309). Tasleem shows a 3,216.08 AED credit in your favor — we are confirming by phone. Lootah gas and Just Life cleaning are all current. Everything under control. 🌸',
-        'החשבונות שלך: DEWA בהוראת קבע (חשבון 2060863309). בטסלים מופיע זיכוי של 3,216.08 AED לטובתך — אנחנו מאמתים טלפונית. גז לוטה וניקיון Just Life מעודכנים. הכל תחת שליטה. 🌸'
-      );
-    }
-
-    // This week / due dates
-    if (/semana|week|vence|due|prazo|datas|שבוע|מתי/.test(query)) {
-      const upcoming = keyDates.filter((k) => k.status !== 'dismissed').slice(0, 3);
-      const list = upcoming.map((k) => `${k.label[L] || k.label.pt} (${k.date})`).join('; ');
-      return t(
-        `No radar: ${list}. Nada disso exige ação sua hoje — avisaremos no momento certo. 🌸`,
-        `On the radar: ${list}. None of these require your action today — we will alert you at the right moment. 🌸`,
-        `על הרדאר: ${list}. אף אחד מהם לא דורש פעולה ממך היום — נעדכן אותך ברגע הנכון. 🌸`
-      );
-    }
-
-    // Completed
-    if (/conclu|complet|resolvid|done|finaliz|הושלם|נסגר/.test(query)) {
-      const list = done.slice(0, 4).map((c) => `${c.emoji} ${caseTitle(c)}`).join(', ');
-      return t(
-        `Recentemente concluídos: ${list}. Os comprovantes estão no Arquivo. 🌸`,
-        `Recently completed: ${list}. Proofs are in the Archive. 🌸`,
-        `הושלמו לאחרונה: ${list}. האסמכתאות בארכיון. 🌸`
-      );
-    }
-
-    // General status summary
-    return t(
-      `Resumo: ${active.length} casos em nossas mãos, ${pending.length} aguardando sua decisão e ${done.length} concluídos. ${briefing.prose[L]?.slice(0, 180) || ''}... Para algo específico, é só perguntar — ou a equipe Mimo entra em contato pessoalmente. 🌸`,
-      `Summary: ${active.length} cases in our hands, ${pending.length} awaiting your decision, and ${done.length} completed. For anything specific just ask — or the Mimo team will follow up personally. 🌸`,
-      `סיכום: ${active.length} תיקים בטיפולנו, ${pending.length} ממתינים להחלטתך ו-${done.length} הושלמו. לכל שאלה ספציפית פשוט שאלי — או שצוות מימו יחזור אלייך אישית. 🌸`
-    );
-  };
 
   const send = async (text?: string) => {
     const userMsg = (text ?? input).trim();
@@ -164,51 +52,11 @@ export const ConciergeAI: React.FC = () => {
     setInput('');
     setIsTyping(true);
 
-    const langName = { pt: 'Portuguese (Brazilian)', en: 'English', he: 'Hebrew' }[language];
-
-    try {
-      const res = await fetch(`${import.meta.env.VITE_FRONTEND_FORGE_API_URL}/v1/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_FRONTEND_FORGE_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: 'gemini-3-flash-preview',
-          max_tokens: 2048,
-          messages: [
-            {
-              role: 'system',
-              content: `You are the LaMi Concierge, the private lifestyle assistant of Mimo's Collective in Dubai, speaking to the client Layla. Tone: warm, discreet, première-classe — like the concierge of a private members' club. Always address her respectfully and end with a calm reassurance when appropriate.
-
-RULES:
-1. Answer ONLY using the app data below. Never invent cases, prices, or dates.
-2. If the question is outside the data, say the Mimo team will follow up personally.
-3. Respond in ${langName}. Keep answers concise (2-5 sentences), elegant, no bullet spam.
-4. Currency is AED. Dates in a friendly format.
-
-APP DATA:
-${buildContext()}`
-            },
-            ...messages.slice(-6).map((m) => ({
-              role: m.role === 'ai' ? ('assistant' as const) : ('user' as const),
-              content: m.text
-            })),
-            { role: 'user', content: userMsg }
-          ]
-        })
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      const reply = data?.choices?.[0]?.message?.content?.trim();
-      setMessages((prev) => [...prev, { role: 'ai', text: reply || localAnswer(userMsg) }]);
-    } catch {
-      // Static deployments cannot reach the LLM proxy — answer locally from app state
-      await new Promise((r) => setTimeout(r, 600));
-      setMessages((prev) => [...prev, { role: 'ai', text: localAnswer(userMsg) }]);
-    } finally {
-      setIsTyping(false);
-    }
+    // Sanitized snapshot only — internal fields and account numbers never leave the app
+    const groundingData = buildGroundingData(cases, utilities, keyDates, briefing, language);
+    const { reply } = await askConcierge(userMsg, language, groundingData);
+    setMessages((prev) => [...prev, { role: 'ai', text: reply }]);
+    setIsTyping(false);
   };
 
   const placeholder = {

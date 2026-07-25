@@ -9,7 +9,7 @@ import { getTranslation } from '../i18n/translations';
 import { CaseItem, I18nText } from '../types';
 import { SubtaskProgressChart } from './SubtaskProgressChart';
 import { motion, AnimatePresence } from 'motion/react';
-import { notifyCaseCompleted, notifyAwaitingApproval } from '../services/whatsapp';
+import { notifyCaseCompleted, notifyAwaitingApproval, openMimoCaseWhatsApp } from '../services/whatsapp';
 import { hapticSuccess, hapticTap } from '../utils/haptics';
 import {
   ArrowLeft,
@@ -19,7 +19,8 @@ import {
   Send,
   ShieldCheck,
   Sparkles,
-  Award
+  Award,
+  MessageCircle
 } from 'lucide-react';
 
 export const CaseDetailScreen: React.FC = () => {
@@ -133,6 +134,16 @@ export const CaseDetailScreen: React.FC = () => {
       {/* Case Header Card */}
       <div className="lami-card space-y-4">
         <div className="flex items-start justify-between gap-3">
+          <button
+            onClick={() => {
+              hapticTap();
+              openMimoCaseWhatsApp(titleText, language);
+            }}
+            aria-label="WhatsApp Mimo"
+            className="order-2 shrink-0 w-10 h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center active:scale-90 transition-transform shadow-[0_2px_10px_rgba(37,211,102,0.35)]"
+          >
+            <MessageCircle className="w-5 h-5" />
+          </button>
           <div className="flex items-center gap-3">
             <span className="text-3xl p-3 bg-[#EEF7F5] rounded-2xl">
               {caseItem.emoji}

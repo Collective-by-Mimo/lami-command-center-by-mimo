@@ -5,6 +5,9 @@
  * Until then, calls are safely no-ops (logged + queued in localStorage).
  */
 
+import { Language } from '../types';
+import { MIMO_WHATSAPP_NUMBER } from '../config/appConfig';
+
 const QUEUE_KEY = 'lami_whatsapp_queue_v1';
 
 interface QueuedNotification {
@@ -84,4 +87,18 @@ export function notifyCaseCompleted(caseName: string) {
 /** 4. Proactive suggestion triggered */
 export function notifySuggestion(suggestionText: string) {
   return sendWhatsAppNotification(`🔮 LaMi: ${suggestionText} ${APP_URL}`);
+}
+
+/** 5. Per-case wa.me deep link — opens a chat with Mimo about a specific case */
+export function getMimoCaseWhatsAppUrl(caseTitle: string, language: Language): string {
+  const text = {
+    pt: `Oi Mimo 🛎️ sobre: ${caseTitle}`,
+    en: `Hi Mimo 🛎️ about: ${caseTitle}`,
+    he: `היי מימו 🛎️ בנוגע ל: ${caseTitle}`
+  }[language];
+  return `https://wa.me/${MIMO_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+}
+
+export function openMimoCaseWhatsApp(caseTitle: string, language: Language): void {
+  window.open(getMimoCaseWhatsAppUrl(caseTitle, language), '_blank', 'noopener,noreferrer');
 }

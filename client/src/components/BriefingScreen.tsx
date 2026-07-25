@@ -2,7 +2,8 @@
  * LaMi Briefing (home) — cream bg, no dark heroes. Sections:
  * A greeting (time-aware) · B daily briefing card (gold 3px border) ·
  * C requires-your-attention (gold tinted, pulse chips) · D week pills ·
- * E proactive radar suggestion (max 1) · F recently completed chips.
+ * E proactive radar suggestion (max 1) · F recently completed chips ·
+ * G quick access — Take me home + Contacts/Connections tiles ("More" grid).
  */
 import React, { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
@@ -10,6 +11,8 @@ import { RadarCard } from './RadarCard';
 import { WeekStrip } from './WeekStrip';
 import { motion } from 'motion/react';
 import { hapticTap } from '../utils/haptics';
+import { HOME_CONFIG } from '../config/appConfig';
+import { Phone, Link2, ChevronRight } from 'lucide-react';
 
 const sectionAnim = (delay: number) => ({
   initial: { opacity: 0, y: 12 },
@@ -73,7 +76,13 @@ export const BriefingScreen: React.FC = () => {
     empty: { pt: 'Tudo em nossas mãos', en: 'Everything in our hands', he: 'הכל בטיפולנו' }[language],
     completed: { pt: 'Recentemente concluído', en: 'Recently completed', he: 'הושלם לאחרונה' }[language],
     seeAll: { pt: 'Ver todos →', en: 'See all →', he: '→ הצג הכל' }[language],
-    awaitingChip: { pt: '🔔 Aguardando você', en: '🔔 Awaiting you', he: '🔔 ממתין לך' }[language]
+    awaitingChip: { pt: '🔔 Aguardando você', en: '🔔 Awaiting you', he: '🔔 ממתין לך' }[language],
+    quickAccess: { pt: 'Acesso rápido', en: 'Quick access', he: 'גישה מהירה' }[language],
+    takeMeHome: { pt: '🏠 Levar-me para casa', en: '🏠 Take me home', he: '🏠 קחו אותי הביתה' }[language],
+    contactsTile: { pt: 'Contatos', en: 'Contacts', he: 'אנשי קשר' }[language],
+    contactsTileSub: { pt: 'Ligações em um toque', en: 'One-tap calls', he: 'חיוג בלחיצה אחת' }[language],
+    connectionsTile: { pt: 'Conexões', en: 'Connections', he: 'חיבורים' }[language],
+    connectionsTileSub: { pt: 'Portais dos provedores', en: 'Provider portals', he: 'פורטלים של ספקים' }[language]
   };
 
   return (
@@ -205,6 +214,68 @@ export const BriefingScreen: React.FC = () => {
             </h3>
           </div>
         )}
+      </motion.section>
+
+      {/* G — Quick access: Take me home + Contacts/Connections tiles */}
+      <motion.section {...sectionAnim(0.32)} className="space-y-3">
+        <h2 className="font-serif-display text-[18px] text-[#0E3F3A]">
+          <span className="text-[#B8912E]">— </span>
+          {t.quickAccess}
+        </h2>
+
+        <a
+          href={HOME_CONFIG.mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => hapticTap()}
+          className="block bg-white rounded-2xl p-[14px] shadow-[0_2px_16px_rgba(14,63,58,0.08)] active:scale-[0.99] transition-transform"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-serif-display text-[17px] font-semibold text-[#0E3F3A] leading-tight">
+                {t.takeMeHome}
+              </p>
+              <p className="text-[12px] text-[#6B7280] truncate mt-0.5">{HOME_CONFIG.label}</p>
+            </div>
+            <ChevronRight
+              className={`w-4 h-4 text-[#B8912E] shrink-0 ${isRTL ? 'rotate-180' : ''}`}
+            />
+          </div>
+        </a>
+
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => {
+              hapticTap();
+              setCurrentView('contacts');
+            }}
+            className="bg-white rounded-2xl p-[14px] shadow-[0_2px_16px_rgba(14,63,58,0.08)] active:scale-[0.98] transition-transform text-start"
+          >
+            <span className="w-10 h-10 rounded-full bg-[#EEF7F5] flex items-center justify-center mb-2">
+              <Phone className="w-4 h-4 text-[#145A52]" />
+            </span>
+            <p className="font-serif-display text-[16px] font-semibold text-[#0E3F3A] leading-tight">
+              {t.contactsTile}
+            </p>
+            <p className="text-[12px] text-[#6B7280] mt-0.5">{t.contactsTileSub}</p>
+          </button>
+
+          <button
+            onClick={() => {
+              hapticTap();
+              setCurrentView('connections');
+            }}
+            className="bg-white rounded-2xl p-[14px] shadow-[0_2px_16px_rgba(14,63,58,0.08)] active:scale-[0.98] transition-transform text-start"
+          >
+            <span className="w-10 h-10 rounded-full bg-[#FBF6E8] flex items-center justify-center mb-2">
+              <Link2 className="w-4 h-4 text-[#B8912E]" />
+            </span>
+            <p className="font-serif-display text-[16px] font-semibold text-[#0E3F3A] leading-tight">
+              {t.connectionsTile}
+            </p>
+            <p className="text-[12px] text-[#6B7280] mt-0.5">{t.connectionsTileSub}</p>
+          </button>
+        </div>
       </motion.section>
 
       {/* D — Upcoming this week */}
