@@ -5,7 +5,7 @@ import { authenticateBiometric, isWebAuthnSupported } from '../utils/webauthn';
 import { hapticTap, hapticWarning } from '../utils/haptics';
 
 export const LoginScreen: React.FC = () => {
-  const { login, language, setLanguage, isRTL, isBiometricEnabled } = useApp();
+  const { login, loginBiometric, language, setLanguage, isRTL, isBiometricEnabled } = useApp();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -215,7 +215,7 @@ export const LoginScreen: React.FC = () => {
                   setIsSubmitting(true);
                   const success = await authenticateBiometric();
                   if (success) {
-                    login('Layla_Portal', '@Mimo2026');
+                    loginBiometric();
                   } else {
                     setErrorMessage('Falha na autenticação biométrica.');
                   }

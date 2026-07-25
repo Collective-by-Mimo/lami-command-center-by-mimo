@@ -47,6 +47,7 @@ interface AppContextType {
   exportJSON: () => void;
   isAuthenticated: boolean;
   login: (u: string, p: string) => boolean;
+  loginBiometric: () => void;
   logout: () => void;
   isBiometricEnabled: boolean;
   toggleBiometric: () => void;
@@ -105,16 +106,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // AUTH: Supabase multi-user — Phase 2 integration point.
-  // Single shared credential + ?operator=1 toggle stay until real auth lands.
+  // Single shared soft-gate credential + ?operator=1 toggle stay until real
+  // (server-side) auth lands. The password is read from an env var so it is
+  // not committed to the (public) repo; set VITE_APP_PASSWORD in the host's
+  // environment. NOTE: like any client-side gate, the value is still inlined
+  // into the built bundle — treat it as a gate, not a secret.
+  const APP_USER = (import.meta.env.VITE_APP_USER || 'Layla_Portal').trim();
+  const APP_PASSWORD = import.meta.env.VITE_APP_PASSWORD || '@Mimo2026';
+
+  const authenticate = () => {
+    setIsAuthenticated(true);
+    localStorage.setItem('lami_authenticated', 'true');
+    hapticSuccess();
+  };
+
   const login = (user: string, pass: string): boolean => {
-    if (user.trim() === 'Layla_Portal' && pass === '@Mimo2026') {
-      setIsAuthenticated(true);
-      localStorage.setItem('lami_authenticated', 'true');
-      hapticSuccess();
+    if (user.trim() === APP_USER && pass === APP_PASSWORD) {
+      authenticate();
       return true;
     }
     return false;
   };
+
+  // Biometric (WebAuthn) success authenticates without re-checking the
+  // password, so the credential is never duplicated in the login UI.
+  const loginBiometric = () => authenticate();
 
   const logout = () => {
     setIsAuthenticated(false);
@@ -430,6 +446,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         exportJSON,
         isAuthenticated,
         login,
+        loginBiometric,
         logout,
         isBiometricEnabled,
         toggleBiometric,
