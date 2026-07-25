@@ -78,7 +78,7 @@ export const WeekStrip: React.FC = () => {
                 setActiveDay(isActive ? null : key);
               }}
               className={`w-12 shrink-0 rounded-2xl py-2 flex flex-col items-center gap-0.5 transition-colors ${
-                isActive ? 'bg-[#145A52] text-white' : 'bg-white text-[#0E3F3A] shadow-[0_2px_8px_rgba(14,63,58,0.06)]'
+                isActive ? 'bg-[#145A52] text-white' : 'bg-white text-[#0E3F3A] border border-[#E7E1D5]'
               }`}
             >
               <span className="text-[10px] font-medium uppercase tracking-wide opacity-80">{dayName}</span>

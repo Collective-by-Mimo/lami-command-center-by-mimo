@@ -12,7 +12,7 @@ import { WeekStrip } from './WeekStrip';
 import { motion } from 'motion/react';
 import { hapticTap } from '../utils/haptics';
 import { HOME_CONFIG } from '../config/appConfig';
-import { Phone, Link2, ChevronRight } from 'lucide-react';
+import { Phone, Link2, ChevronRight, FileText, Home } from 'lucide-react';
 
 const sectionAnim = (delay: number) => ({
   initial: { opacity: 0, y: 12 },
@@ -68,7 +68,7 @@ export const BriefingScreen: React.FC = () => {
   const showReadMore = briefingText.length > 180;
 
   const t = {
-    briefingLabel: { pt: '📋 Briefing de hoje', en: "📋 Today's briefing", he: '📋 סיכום יומי' }[language],
+    briefingLabel: { pt: 'Briefing de hoje', en: "Today's briefing", he: 'סיכום יומי' }[language],
     readMore: { pt: 'Ler mais ↓', en: 'Read more ↓', he: 'קרא עוד ↓' }[language],
     readLess: { pt: 'Ler menos ↑', en: 'Read less ↑', he: 'קרא פחות ↑' }[language],
     attention: { pt: 'Requer sua atenção', en: 'Requires your attention', he: 'דורש את תשומת לבך' }[language],
@@ -78,7 +78,7 @@ export const BriefingScreen: React.FC = () => {
     seeAll: { pt: 'Ver todos →', en: 'See all →', he: '→ הצג הכל' }[language],
     awaitingChip: { pt: '🔔 Aguardando você', en: '🔔 Awaiting you', he: '🔔 ממתין לך' }[language],
     quickAccess: { pt: 'Acesso rápido', en: 'Quick access', he: 'גישה מהירה' }[language],
-    takeMeHome: { pt: '🏠 Levar-me para casa', en: '🏠 Take me home', he: '🏠 קחו אותי הביתה' }[language],
+    takeMeHome: { pt: 'Levar-me para casa', en: 'Take me home', he: 'קחו אותי הביתה' }[language],
     contactsTile: { pt: 'Contatos', en: 'Contacts', he: 'אנשי קשר' }[language],
     contactsTileSub: { pt: 'Ligações em um toque', en: 'One-tap calls', he: 'חיוג בלחיצה אחת' }[language],
     connectionsTile: { pt: 'Conexões', en: 'Connections', he: 'חיבורים' }[language],
@@ -103,7 +103,7 @@ export const BriefingScreen: React.FC = () => {
       {/* B — Daily briefing card */}
       <motion.div
         {...sectionAnim(0.2)}
-        className={`relative bg-white rounded-2xl p-[18px] shadow-[0_2px_16px_rgba(14,63,58,0.08)] overflow-hidden`}
+        className={`relative bg-white rounded-2xl p-[18px] border border-[#E7E1D5] overflow-hidden`}
       >
         <motion.span
           initial={{ height: 0 }}
@@ -111,7 +111,8 @@ export const BriefingScreen: React.FC = () => {
           transition={{ delay: 0.3, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
           className={`absolute top-0 ${isRTL ? 'right-0' : 'left-0'} w-[3px] bg-[#B8912E]`}
         />
-        <p className="text-[11px] font-medium uppercase tracking-wider text-[#B8912E] mb-2" style={{ fontFamily: 'Inter' }}>
+        <p className="text-[11px] font-medium uppercase tracking-wider text-[#B8912E] mb-2 flex items-center gap-1.5" style={{ fontFamily: 'Inter' }}>
+          <FileText className="w-3.5 h-3.5" strokeWidth={2} />
           {t.briefingLabel}
         </p>
         {editingBriefing ? (
@@ -183,7 +184,7 @@ export const BriefingScreen: React.FC = () => {
                     hapticTap();
                     navigateToCaseDetail(c.id);
                   }}
-                  className={`bg-white rounded-2xl p-[14px] shadow-[0_2px_10px_rgba(14,63,58,0.06)] cursor-pointer active:scale-[0.99] transition-transform ${
+                  className={`bg-white rounded-2xl p-[14px] border border-[#E7E1D5] cursor-pointer active:scale-[0.99] transition-transform ${
                     isRTL ? 'border-r-4 border-r-[#B8912E]' : 'border-l-4 border-l-[#B8912E]'
                   }`}
                 >
@@ -228,14 +229,19 @@ export const BriefingScreen: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => hapticTap()}
-          className="block bg-white rounded-2xl p-[14px] shadow-[0_2px_16px_rgba(14,63,58,0.08)] active:scale-[0.99] transition-transform"
+          className="block bg-white rounded-2xl p-[14px] border border-[#E7E1D5] active:scale-[0.99] transition-transform"
         >
           <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="font-serif-display text-[17px] font-semibold text-[#0E3F3A] leading-tight">
-                {t.takeMeHome}
-              </p>
-              <p className="text-[12px] text-[#6B7280] truncate mt-0.5">{HOME_CONFIG.label}</p>
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="w-10 h-10 rounded-full bg-[#EEF7F5] flex items-center justify-center shrink-0">
+                <Home className="w-[18px] h-[18px] text-[#145A52]" strokeWidth={1.75} />
+              </span>
+              <div className="min-w-0">
+                <p className="font-serif-display text-[17px] font-semibold text-[#0E3F3A] leading-tight">
+                  {t.takeMeHome}
+                </p>
+                <p className="text-[12px] text-[#6B7280] truncate mt-0.5">{HOME_CONFIG.label}</p>
+              </div>
             </div>
             <ChevronRight
               className={`w-4 h-4 text-[#B8912E] shrink-0 ${isRTL ? 'rotate-180' : ''}`}
@@ -249,7 +255,7 @@ export const BriefingScreen: React.FC = () => {
               hapticTap();
               setCurrentView('contacts');
             }}
-            className="bg-white rounded-2xl p-[14px] shadow-[0_2px_16px_rgba(14,63,58,0.08)] active:scale-[0.98] transition-transform text-start"
+            className="bg-white rounded-2xl p-[14px] border border-[#E7E1D5] active:scale-[0.98] transition-transform text-start"
           >
             <span className="w-10 h-10 rounded-full bg-[#EEF7F5] flex items-center justify-center mb-2">
               <Phone className="w-4 h-4 text-[#145A52]" />
@@ -265,7 +271,7 @@ export const BriefingScreen: React.FC = () => {
               hapticTap();
               setCurrentView('connections');
             }}
-            className="bg-white rounded-2xl p-[14px] shadow-[0_2px_16px_rgba(14,63,58,0.08)] active:scale-[0.98] transition-transform text-start"
+            className="bg-white rounded-2xl p-[14px] border border-[#E7E1D5] active:scale-[0.98] transition-transform text-start"
           >
             <span className="w-10 h-10 rounded-full bg-[#FBF6E8] flex items-center justify-center mb-2">
               <Link2 className="w-4 h-4 text-[#B8912E]" />
@@ -314,7 +320,7 @@ export const BriefingScreen: React.FC = () => {
               <button
                 key={c.id}
                 onClick={() => navigateToCaseDetail(c.id)}
-                className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full text-[13px] text-[#6B7280] shadow-[0_1px_6px_rgba(14,63,58,0.06)]"
+                className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full text-[13px] text-[#6B7280] border border-[#E7E1D5]"
               >
                 <span>✔️</span>
                 <span className="max-w-[180px] truncate">{c.title[language] || c.title.pt}</span>

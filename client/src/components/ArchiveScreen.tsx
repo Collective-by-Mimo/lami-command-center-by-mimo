@@ -63,7 +63,7 @@ export const ArchiveScreen: React.FC = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={getTranslation('searchPlaceholder', language)}
-          className={`w-full h-11 bg-white rounded-full shadow-[0_2px_10px_rgba(14,63,58,0.06)] text-[14px] text-[#1A1A1A] placeholder:text-[#9AA3A0] focus:outline-none focus:ring-2 focus:ring-[#145A52]/30 ${
+          className={`w-full h-11 bg-white rounded-full border border-[#E7E1D5] text-[14px] text-[#1A1A1A] placeholder:text-[#9AA3A0] focus:outline-none focus:ring-2 focus:ring-[#145A52]/30 ${
             isRTL ? 'pr-11 pl-4' : 'pl-11 pr-4'
           }`}
         />
@@ -99,7 +99,7 @@ export const ArchiveScreen: React.FC = () => {
                     <div
                       key={c.id}
                       onClick={() => navigateToCaseDetail(c.id)}
-                      className={`bg-white rounded-[16px] px-4 py-[14px] shadow-[0_2px_16px_rgba(14,63,58,0.06)] hover:shadow-md transition cursor-pointer flex items-center justify-between gap-3 group opacity-90 ${
+                      className={`bg-white rounded-[16px] px-4 py-[14px] border border-[#E7E1D5] hover:shadow-md transition cursor-pointer flex items-center justify-between gap-3 group opacity-90 ${
                         isRTL ? 'border-r-4 border-r-[#CCCCCC]' : 'border-l-4 border-l-[#CCCCCC]'
                       }`}
                     >
@@ -137,7 +137,7 @@ export const ArchiveScreen: React.FC = () => {
             );
           })
         ) : (
-          <div className="bg-white rounded-2xl p-8 text-center py-12 shadow-[0_2px_16px_rgba(14,63,58,0.06)]">
+          <div className="bg-white rounded-2xl p-8 text-center py-12 border border-[#E7E1D5]">
             <p className="text-sm text-[#62726F] font-serif-display italic text-[16px]">
               {{ pt: 'Nenhum caso concluído no arquivo com esta pesquisa.', en: 'No completed cases match this search.', he: 'לא נמצאו תיקים שהושלמו בחיפוש זה.' }[language]}
             </p>
