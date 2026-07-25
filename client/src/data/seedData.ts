@@ -63,6 +63,7 @@ export const INITIAL_UTILITIES: UtilityItem[] = [
 export const INITIAL_CASES: CaseItem[] = [
   {
     id: 'case-lv-bag',
+    category: 'moda-luxo',
     emoji: '👜',
     title: {
       pt: 'Bolsa Louis Vuitton — Reparo',
@@ -172,6 +173,7 @@ export const INITIAL_CASES: CaseItem[] = [
   },
   {
     id: 'case-laundry',
+    category: 'lavanderia',
     emoji: '🧺',
     title: {
       pt: 'Lavanderia — Orçamento e envio',
@@ -284,6 +286,7 @@ export const INITIAL_CASES: CaseItem[] = [
   },
   {
     id: 'case-bathroom-leak',
+    category: 'manutencao-condominio',
     emoji: '🚿',
     title: {
       pt: 'Vazamento no teto do banheiro',
@@ -321,6 +324,7 @@ export const INITIAL_CASES: CaseItem[] = [
   },
   {
     id: 'case-tasleem-balance',
+    category: 'utilidades',
     emoji: '❄️',
     title: {
       pt: 'Tasleem (district cooling) — Verificação do saldo',
@@ -386,6 +390,7 @@ export const INITIAL_CASES: CaseItem[] = [
   },
   {
     id: 'case-dewa-cycle',
+    category: 'utilidades',
     emoji: '⚡',
     title: {
       pt: 'DEWA — Ciclo mensal',
@@ -418,6 +423,7 @@ export const INITIAL_CASES: CaseItem[] = [
   },
   {
     id: 'case-lootah-gas',
+    category: 'utilidades',
     emoji: '🔥',
     title: {
       pt: 'Lootah Gas — Registro e contato',
@@ -450,6 +456,7 @@ export const INITIAL_CASES: CaseItem[] = [
   },
   {
     id: 'case-just-life',
+    category: 'limpeza',
     emoji: '🧹',
     title: {
       pt: 'Just Life — Cobrança fim do aluguel',
@@ -482,6 +489,7 @@ export const INITIAL_CASES: CaseItem[] = [
   },
   {
     id: 'case-carpets-ana',
+    category: 'limpeza',
     emoji: '🧶',
     title: {
       pt: 'Carpetes — Tratar com a Ana',
@@ -515,6 +523,7 @@ export const INITIAL_CASES: CaseItem[] = [
   // Completed cases for Archive
   {
     id: 'case-orchids-completed',
+    category: 'pessoal',
     emoji: '🌸',
     title: {
       pt: 'Orquídeas e arranjos florais da residência',
@@ -555,6 +564,7 @@ export const INITIAL_CASES: CaseItem[] = [
   },
   {
     id: 'case-rta-car-completed',
+    category: 'transporte',
     emoji: '🚗',
     title: {
       pt: 'Renovação do registro do veículo no RTA',

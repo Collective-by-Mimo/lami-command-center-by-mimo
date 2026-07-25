@@ -198,7 +198,8 @@ export class DataAdapter {
         }
       ],
       quotations: newCase.quotations || [],
-      decision: newCase.decision
+      decision: newCase.decision,
+      category: newCase.category
     };
 
     this.cases.unshift(created);

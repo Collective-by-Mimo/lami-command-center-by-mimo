@@ -1,45 +1,30 @@
 /**
- * LaMi Cases — pill search bar, scrollable filter pills, elegant mixed-case
- * category dividers with thin extending line, Framer Motion layout animation,
- * operator FAB (56px teal spring) opening a New Case modal.
+ * LaMi Cases — pill search bar, state filter pills, category filter chips
+ * (extensible taxonomy from appConfig) with collapsible groups (collapsed by
+ * default so the list stays navigable at 100+ cases), Framer Motion layout
+ * animation, operator FAB (56px teal spring) opening a New Case modal.
  */
 import React, { useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { CaseCard } from './CaseCard';
 import { getTranslation } from '../i18n/translations';
-import { Search, Plus, X } from 'lucide-react';
+import { Search, Plus, X, ChevronDown } from 'lucide-react';
 import { CaseItem } from '../types';
 import { AnimatePresence, motion } from 'motion/react';
 import { notifyNewCase } from '../services/whatsapp';
-
-const CATEGORY_ORDER = ['Moda & Luxo', 'Residência', 'Utilidades', 'Documentos & Mobilidade', 'Serviços'];
-
-const CATEGORY_LABELS: Record<string, { pt: string; en: string; he: string }> = {
-  'Moda & Luxo': { pt: 'Moda & Luxo', en: 'Fashion & Luxury', he: 'אופנה ויוקרה' },
-  'Residência': { pt: 'Residência', en: 'Residence', he: 'מגורים' },
-  'Utilidades': { pt: 'Utilidades', en: 'Utilities', he: 'שירותים' },
-  'Documentos & Mobilidade': { pt: 'Documentos & Mobilidade', en: 'Documents & Mobility', he: 'מסמכים וניידות' },
-  'Serviços': { pt: 'Serviços', en: 'Services', he: 'שירותים כלליים' }
-};
-
-// Visual-only category mapping by emoji/case id
-function categorize(c: CaseItem): string {
-  if (c.category && CATEGORY_LABELS[c.category]) return c.category;
-  if (['👜', '🌸'].includes(c.emoji)) return 'Moda & Luxo';
-  if (['🚿', '🧺', '🧶', '🧹'].includes(c.emoji)) return 'Residência';
-  if (['⚡', '❄️', '🔥'].includes(c.emoji)) return 'Utilidades';
-  if (['🚗', '🛂'].includes(c.emoji)) return 'Documentos & Mobilidade';
-  return 'Serviços';
-}
+import { CASE_CATEGORIES, resolveCaseCategory } from '../config/appConfig';
+import { hapticTap } from '../utils/haptics';
 
 export const CasesScreen: React.FC = () => {
   const { cases, language, navigateToCaseDetail, isOperator, createNewCase, isRTL } = useApp();
   const [filterState, setFilterState] = useState<'all' | 'waiting' | 'inHand' | 'completed'>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({});
   const [query, setQuery] = useState('');
   const [showNewCase, setShowNewCase] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newEmoji, setNewEmoji] = useState('✨');
-  const [newCategory, setNewCategory] = useState('Serviços');
+  const [newCategory, setNewCategory] = useState('pessoal');
 
   const filters = [
     { id: 'all', label: { pt: 'Todos', en: 'All', he: 'הכל' } },
@@ -49,8 +34,11 @@ export const CasesScreen: React.FC = () => {
   ];
 
   const searchPlaceholder = { pt: 'Buscar casos...', en: 'Search cases...', he: 'חיפוש תיקים...' }[language];
+  const allCategoriesLabel = { pt: 'Todas', en: 'All', he: 'הכל' }[language];
+  const casesWord = { pt: 'casos', en: 'cases', he: 'תיקים' }[language];
+  const caseWord = { pt: 'caso', en: 'case', he: 'תיק' }[language];
 
-  const filteredCases = useMemo(
+  const stateFilteredCases = useMemo(
     () =>
       cases.filter((c) => {
         if (filterState === 'waiting' && c.clientState !== '🔔 Aguardando você') return false;
@@ -66,15 +54,42 @@ export const CasesScreen: React.FC = () => {
     [cases, filterState, query]
   );
 
+  // Category chips: only taxonomy entries that currently have matching cases
+  const availableCategories = useMemo(() => {
+    const present = new Set(stateFilteredCases.map((c) => resolveCaseCategory(c)));
+    return CASE_CATEGORIES.filter((cat) => present.has(cat.id));
+  }, [stateFilteredCases]);
+
+  const filteredCases = useMemo(
+    () =>
+      selectedCategory === 'all'
+        ? stateFilteredCases
+        : stateFilteredCases.filter((c) => resolveCaseCategory(c) === selectedCategory),
+    [stateFilteredCases, selectedCategory]
+  );
+
+  // Groups in taxonomy order — only categories that have cases after filtering
   const groupedCases = useMemo(() => {
     const acc: Record<string, CaseItem[]> = {};
     filteredCases.forEach((c) => {
-      const cat = categorize(c);
+      const cat = resolveCaseCategory(c);
       if (!acc[cat]) acc[cat] = [];
       acc[cat].push(c);
     });
-    return CATEGORY_ORDER.filter((cat) => acc[cat]?.length).map((cat) => [cat, acc[cat]] as const);
+    return CASE_CATEGORIES.filter((cat) => acc[cat.id]?.length).map(
+      (cat) => [cat, acc[cat.id]] as const
+    );
   }, [filteredCases]);
+
+  // Groups auto-expand while searching or when a single category is selected;
+  // otherwise they start collapsed so 100+ cases stay scannable.
+  const isExpanded = (catId: string) =>
+    query.trim().length > 0 || selectedCategory !== 'all' || !!expandedCats[catId];
+
+  const toggleCategory = (catId: string) => {
+    hapticTap();
+    setExpandedCats((prev) => ({ ...prev, [catId]: !isExpanded(catId) }));
+  };
 
   const handleCreate = () => {
     if (!newTitle.trim()) return;
@@ -115,7 +130,7 @@ export const CasesScreen: React.FC = () => {
         />
       </div>
 
-      {/* Filter pills */}
+      {/* State filter pills */}
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-4 px-4">
         {filters.map((f) => (
           <button
@@ -130,35 +145,94 @@ export const CasesScreen: React.FC = () => {
         ))}
       </div>
 
-      {/* Grouped case list */}
+      {/* Category filter chips */}
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-4 px-4">
+        <button
+          onClick={() => {
+            hapticTap();
+            setSelectedCategory('all');
+          }}
+          className={`px-3.5 py-1.5 rounded-[20px] text-[12px] font-medium whitespace-nowrap border border-[#B8912E] transition-colors ${
+            selectedCategory === 'all' ? 'bg-[#B8912E] text-white' : 'bg-white text-[#B8912E]'
+          }`}
+        >
+          {allCategoriesLabel}
+        </button>
+        {availableCategories.map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => {
+              hapticTap();
+              setSelectedCategory(selectedCategory === cat.id ? 'all' : cat.id);
+            }}
+            className={`px-3.5 py-1.5 rounded-[20px] text-[12px] font-medium whitespace-nowrap border border-[#B8912E] transition-colors ${
+              selectedCategory === cat.id ? 'bg-[#B8912E] text-white' : 'bg-white text-[#B8912E]'
+            }`}
+          >
+            {cat.emoji} {cat.label[language] || cat.label.pt}
+          </button>
+        ))}
+      </div>
+
+      {/* Collapsible category groups */}
       {groupedCases.length > 0 ? (
-        <div className="space-y-6">
-          {groupedCases.map(([category, catCases]) => (
-            <div key={category} className="space-y-2.5">
-              <div className="flex items-center gap-3">
-                <h3 className="text-[13px] font-semibold text-[#999999] tracking-[0.5px] shrink-0 font-serif-display">
-                  {CATEGORY_LABELS[category]?.[language] || category}
-                </h3>
-                <span className="flex-1 h-px bg-[#E2DDD5]" />
-              </div>
-              <motion.div layout className="space-y-3">
+        <div className="space-y-4">
+          {groupedCases.map(([category, catCases]) => {
+            const open = isExpanded(category.id);
+            return (
+              <div key={category.id} className="space-y-2.5">
+                <button
+                  onClick={() => toggleCategory(category.id)}
+                  className="w-full flex items-center gap-3"
+                >
+                  <h3 className="text-[13px] font-semibold text-[#999999] tracking-[0.5px] shrink-0 font-serif-display">
+                    {category.emoji} {category.label[language] || category.label.pt}
+                  </h3>
+                  <span className="flex-1 h-px bg-[#E2DDD5]" />
+                  <span className="text-[11px] font-medium text-[#145A52] bg-[#EEF7F5] px-2 py-0.5 rounded-full shrink-0">
+                    {catCases.length} {catCases.length === 1 ? caseWord : casesWord}
+                  </span>
+                  <motion.span
+                    animate={{ rotate: open ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="shrink-0"
+                  >
+                    <ChevronDown className="w-4 h-4 text-[#999999]" />
+                  </motion.span>
+                </button>
+
                 <AnimatePresence initial={false}>
-                  {catCases.map((caseItem) => (
+                  {open && (
                     <motion.div
-                      key={caseItem.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.94 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                      key="group"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
+                      className="overflow-hidden"
                     >
-                      <CaseCard caseItem={caseItem} onClick={() => navigateToCaseDetail(caseItem.id)} />
+                      <motion.div layout className="space-y-3">
+                        <AnimatePresence initial={false}>
+                          {catCases.map((caseItem) => (
+                            <motion.div
+                              key={caseItem.id}
+                              layout
+                              initial={{ opacity: 0, scale: 0.94 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.9 }}
+                              transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                            >
+                              <CaseCard caseItem={caseItem} onClick={() => navigateToCaseDetail(caseItem.id)} />
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </motion.div>
                     </motion.div>
-                  ))}
+                  )}
                 </AnimatePresence>
-              </motion.div>
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div className="text-center py-12 text-[#999999]">
@@ -228,9 +302,9 @@ export const CasesScreen: React.FC = () => {
                 onChange={(e) => setNewCategory(e.target.value)}
                 className="w-full h-11 rounded-xl border border-[#E2DDD5] px-3 text-[14px] bg-white focus:outline-none focus:border-[#145A52]"
               >
-                {CATEGORY_ORDER.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
+                {CASE_CATEGORIES.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.emoji} {c.label[language] || c.label.pt}
                   </option>
                 ))}
               </select>
