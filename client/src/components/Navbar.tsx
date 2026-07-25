@@ -1,10 +1,11 @@
 /**
- * LaMi bottom navigation — 4 tabs, gold active indicator (layoutId spring),
- * trilingual labels, pending gold dot on Briefing.
+ * LaMi bottom navigation — 5 primary tabs, gold active indicator (layoutId
+ * spring), trilingual labels, pending gold dot on Briefing. Contacts &
+ * Connections live in the Briefing quick-access grid, not down here.
  */
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Newspaper, Layers, Receipt, Archive } from 'lucide-react';
+import { Newspaper, Layers, Receipt, Archive, Wallet } from 'lucide-react';
 import { motion } from 'motion/react';
 import { hapticTap } from '../utils/haptics';
 
@@ -15,6 +16,7 @@ export const Navbar: React.FC = () => {
   const navItems = [
     { id: 'briefing', label: { pt: 'Briefing', en: 'Briefing', he: 'תדריך' }[language], icon: Newspaper },
     { id: 'cases', label: { pt: 'Casos', en: 'Cases', he: 'תיקים' }[language], icon: Layers },
+    { id: 'finance', label: { pt: 'Finanças', en: 'Finance', he: 'כספים' }[language], icon: Wallet },
     { id: 'utilities', label: { pt: 'Contas', en: 'Bills', he: 'חשבונות' }[language], icon: Receipt },
     { id: 'archive', label: { pt: 'Arquivo', en: 'Archive', he: 'ארכיון' }[language], icon: Archive },
   ];

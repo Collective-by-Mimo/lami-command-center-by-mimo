@@ -11,6 +11,8 @@ import { CasesScreen } from './components/CasesScreen';
 import { CaseDetailScreen } from './components/CaseDetailScreen';
 import { ArchiveScreen } from './components/ArchiveScreen';
 import { UtilitiesPanel } from './components/UtilitiesPanel';
+import { ContactsScreen } from './components/ContactsScreen';
+import { ConnectionsScreen } from './components/ConnectionsScreen';
 import { OperatorPanel } from './components/OperatorPanel';
 import { ProofModal } from './components/ProofModal';
 import { ConciergeAI } from './components/ConciergeAI';
@@ -19,7 +21,7 @@ import { LoginScreen } from './components/LoginScreen';
 import { InstallBanner } from './components/InstallBanner';
 import { AnimatePresence, motion } from 'motion/react';
 
-const VIEW_ORDER = ['briefing', 'cases', 'utilities', 'archive'];
+const VIEW_ORDER = ['briefing', 'contacts', 'connections', 'cases', 'finance', 'utilities', 'archive'];
 
 const MainContent: React.FC = () => {
   const { currentView, isAuthenticated, isOperator, language } = useApp();
@@ -44,6 +46,8 @@ const MainContent: React.FC = () => {
       case 'caseDetail': return <CaseDetailScreen />;
       case 'archive': return <ArchiveScreen />;
       case 'utilities': return <UtilitiesPanel />;
+      case 'contacts': return <ContactsScreen />;
+      case 'connections': return <ConnectionsScreen />;
       default: return <BriefingScreen />;
     }
   };
