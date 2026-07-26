@@ -77,6 +77,7 @@ export interface CaseItem {
   completedMonth?: string; // e.g. "2026-06"
   utilityType?: 'DEWA' | 'Tasleem' | 'Lootah Gas' | 'Just Life';
   category?: string;
+  subcategory?: string;
 }
 
 export interface BriefingData {

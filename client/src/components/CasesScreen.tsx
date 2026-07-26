@@ -12,7 +12,7 @@ import { Search, Plus, X, ChevronDown } from 'lucide-react';
 import { CaseItem } from '../types';
 import { AnimatePresence, motion } from 'motion/react';
 import { notifyNewCase } from '../services/whatsapp';
-import { CASE_CATEGORIES, resolveCaseCategory } from '../config/appConfig';
+import { getAllCaseCategories, addCustomCategory, resolveCaseCategory } from '../config/appConfig';
 import { hapticTap } from '../utils/haptics';
 
 export const CasesScreen: React.FC = () => {
@@ -24,7 +24,11 @@ export const CasesScreen: React.FC = () => {
   const [showNewCase, setShowNewCase] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newEmoji, setNewEmoji] = useState('✨');
-  const [newCategory, setNewCategory] = useState('pessoal');
+  const [newCategory, setNewCategory] = useState('home');
+  const [newSubcategory, setNewSubcategory] = useState('');
+  const [catVersion, setCatVersion] = useState(0); // bump to re-read custom categories
+  const [addingCategory, setAddingCategory] = useState(false);
+  const [newCatName, setNewCatName] = useState('');
 
   const filters = [
     { id: 'all', label: { pt: 'Todos', en: 'All', he: 'הכל' } },
@@ -54,11 +58,8 @@ export const CasesScreen: React.FC = () => {
     [cases, filterState, query]
   );
 
-  // Category chips: only taxonomy entries that currently have matching cases
-  const availableCategories = useMemo(() => {
-    const present = new Set(stateFilteredCases.map((c) => resolveCaseCategory(c)));
-    return CASE_CATEGORIES.filter((cat) => present.has(cat.id));
-  }, [stateFilteredCases]);
+  // All categories (built-in + custom) are always selectable as filter chips.
+  const allCategories = useMemo(() => getAllCaseCategories(), [catVersion]);
 
   const filteredCases = useMemo(
     () =>
@@ -76,10 +77,10 @@ export const CasesScreen: React.FC = () => {
       if (!acc[cat]) acc[cat] = [];
       acc[cat].push(c);
     });
-    return CASE_CATEGORIES.filter((cat) => acc[cat.id]?.length).map(
+    return allCategories.filter((cat) => acc[cat.id]?.length).map(
       (cat) => [cat, acc[cat.id]] as const
     );
-  }, [filteredCases]);
+  }, [filteredCases, allCategories]);
 
   // Groups auto-expand while searching or when a single category is selected;
   // otherwise they start collapsed so 100+ cases stay scannable.
@@ -100,13 +101,28 @@ export const CasesScreen: React.FC = () => {
       clientState: '✅ Em nossas mãos',
       internalStatus: 'Aberto',
       priority: 'Normal',
-      category: newCategory
+      category: newCategory,
+      subcategory: newSubcategory || undefined
     });
     notifyNewCase(newTitle.trim());
     setShowNewCase(false);
     setNewTitle('');
     setNewEmoji('✨');
+    setNewSubcategory('');
   };
+
+  // "Add your own" category — persisted, then selected for this case.
+  const handleAddCategory = () => {
+    if (!newCatName.trim()) return;
+    const cat = addCustomCategory(newCatName.trim(), newEmoji && newEmoji !== '✨' ? newEmoji : '🏷️');
+    setCatVersion((v) => v + 1);
+    setNewCategory(cat.id);
+    setNewSubcategory('');
+    setNewCatName('');
+    setAddingCategory(false);
+  };
+
+  const selectedCatDef = allCategories.find((c) => c.id === newCategory);
 
   return (
     <div className="space-y-5 pb-28 pt-6 px-4 relative">
@@ -158,7 +174,7 @@ export const CasesScreen: React.FC = () => {
         >
           {allCategoriesLabel}
         </button>
-        {availableCategories.map((cat) => (
+        {allCategories.map((cat) => (
           <button
             key={cat.id}
             onClick={() => {
@@ -297,17 +313,66 @@ export const CasesScreen: React.FC = () => {
                   className="flex-1 h-11 rounded-xl border border-[#E2DDD5] px-3 text-[14px] focus:outline-none focus:border-[#145A52]"
                 />
               </div>
-              <select
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                className="w-full h-11 rounded-xl border border-[#E2DDD5] px-3 text-[14px] bg-white focus:outline-none focus:border-[#145A52]"
-              >
-                {CASE_CATEGORIES.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.emoji} {c.label[language] || c.label.pt}
-                  </option>
-                ))}
-              </select>
+              {/* Category */}
+              <div className="space-y-2">
+                <label className="text-[12px] font-medium text-[#6B7280]">Category</label>
+                <select
+                  value={newCategory}
+                  onChange={(e) => {
+                    setNewCategory(e.target.value);
+                    setNewSubcategory('');
+                  }}
+                  className="w-full h-11 rounded-xl border border-[#E2DDD5] px-3 text-[14px] bg-white focus:outline-none focus:border-[#145A52]"
+                >
+                  {allCategories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.emoji} {c.label[language] || c.label.pt}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Subcategory (if the chosen category has any) */}
+                {selectedCatDef?.subcategories && selectedCatDef.subcategories.length > 0 && (
+                  <select
+                    value={newSubcategory}
+                    onChange={(e) => setNewSubcategory(e.target.value)}
+                    className="w-full h-11 rounded-xl border border-[#E2DDD5] px-3 text-[14px] bg-white focus:outline-none focus:border-[#145A52]"
+                  >
+                    <option value="">— Subcategory (optional) —</option>
+                    {selectedCatDef.subcategories.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.label[language] || s.label.pt}
+                      </option>
+                    ))}
+                  </select>
+                )}
+
+                {/* Add your own category */}
+                {addingCategory ? (
+                  <div className="flex gap-2">
+                    <input
+                      value={newCatName}
+                      onChange={(e) => setNewCatName(e.target.value)}
+                      placeholder="New category name"
+                      className="flex-1 h-10 rounded-xl border border-[#E2DDD5] px-3 text-[13px] focus:outline-none focus:border-[#145A52]"
+                    />
+                    <button
+                      onClick={handleAddCategory}
+                      className="h-10 px-3 rounded-xl bg-[#B8912E] text-white text-[13px] font-semibold shrink-0"
+                    >
+                      Add
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setAddingCategory(true)}
+                    className="text-[12px] font-medium text-[#B8912E]"
+                  >
+                    + Add your own category
+                  </button>
+                )}
+              </div>
+
               <button
                 onClick={handleCreate}
                 className="w-full h-11 bg-[#145A52] text-white rounded-full text-[14px] font-semibold active:scale-[0.98] transition-transform"

@@ -202,7 +202,8 @@ export class DataAdapter {
       ],
       quotations: newCase.quotations || [],
       decision: newCase.decision,
-      category: newCase.category
+      category: newCase.category,
+      subcategory: newCase.subcategory
     };
 
     this.cases.unshift(created);
