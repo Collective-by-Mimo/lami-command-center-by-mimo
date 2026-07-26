@@ -18,17 +18,9 @@ interface ChatMsg {
   text: string;
 }
 
-const QUICK_CHIPS: Record<string, string[]> = {
-  pt: ['O que está pendente?', 'Próximas contas?', 'Status da bolsa Chanel', 'O que vence esta semana?'],
-  en: ["What's pending?", 'Upcoming bills?', 'Chanel bag status', 'What is due this week?'],
-  he: ['מה ממתין לי?', 'חשבונות קרובים?', 'סטטוס תיק שאנל', 'מה מסתיים השבוע?']
-};
+const QUICK_CHIPS: string[] = ["What's pending?", 'Upcoming bills?', 'Chanel bag status', 'What is due this week?'];
 
-const GREETINGS: Record<string, string> = {
-  pt: 'Olá, Layla. Como posso ajudar com seus casos hoje? 🌸',
-  en: 'Hello, Layla. How may I help with your matters today? 🌸',
-  he: 'שלום ליילה, איך אפשר לעזור לך היום? 🌸'
-};
+const GREETINGS = 'Hello, Layla. How may I help with your matters today? 🌸';
 
 export const ConciergeAI: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,11 +51,7 @@ export const ConciergeAI: React.FC = () => {
     setIsTyping(false);
   };
 
-  const placeholder = {
-    pt: 'Escreva sua pergunta...',
-    en: 'Type your question...',
-    he: 'כתבי את שאלתך...'
-  }[language];
+  const placeholder = 'Type your question...';
 
   return (
     <>
@@ -111,7 +99,7 @@ export const ConciergeAI: React.FC = () => {
                   <div>
                     <h2 className="font-serif-display italic text-[20px] leading-tight">Concierge LaMi</h2>
                     <p className="text-[11px] text-[#CFE3DE]">
-                      {{ pt: 'Sempre à disposição', en: 'Always at your service', he: 'תמיד לשירותך' }[language]}
+                      {'Always at your service'}
                     </p>
                   </div>
                 </div>
@@ -123,12 +111,12 @@ export const ConciergeAI: React.FC = () => {
               {/* Messages */}
               <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
                 <div className="bg-white rounded-2xl p-3.5 text-[14px] text-[#2C2C2C] border border-[#E7E1D5] max-w-[85%]">
-                  <span className="font-serif-display italic text-[15px]">{GREETINGS[language]}</span>
+                  <span className="font-serif-display italic text-[15px]">{GREETINGS}</span>
                 </div>
 
                 {messages.length === 0 && (
                   <div className="flex flex-wrap gap-2 pt-1">
-                    {QUICK_CHIPS[language].map((chip) => (
+                    {QUICK_CHIPS.map((chip) => (
                       <button
                         key={chip}
                         onClick={() => send(chip)}

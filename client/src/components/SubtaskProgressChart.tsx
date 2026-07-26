@@ -65,11 +65,7 @@ export const SubtaskProgressChart: React.FC<SubtaskProgressChartProps> = ({ case
 
     const newSubtask: SubTask = {
       id: `st-${Date.now()}`,
-      title: {
-        pt: newTitle.trim(),
-        en: newTitle.trim(),
-        he: newTitle.trim()
-      },
+      title: newTitle.trim(),
       completed: false
     };
 
@@ -82,11 +78,7 @@ export const SubtaskProgressChart: React.FC<SubtaskProgressChartProps> = ({ case
     setNewTitle('');
     setIsAdding(false);
     showToast(
-      language === 'pt'
-        ? 'Nova sub-tarefa adicionada!'
-        : language === 'en'
-        ? 'New sub-task added!'
-        : 'משימת משנה חדשה התווספה!'
+      'New sub-task added!'
     );
   };
 
@@ -114,12 +106,12 @@ export const SubtaskProgressChart: React.FC<SubtaskProgressChartProps> = ({ case
   // Recharts Data formatting
   const pieData = [
     {
-      name: language === 'pt' ? 'Concluídas' : language === 'en' ? 'Completed' : 'הושלמו',
+      name: 'Completed',
       value: completedCount,
       color: '#145A52'
     },
     {
-      name: language === 'pt' ? 'Pendentes' : language === 'en' ? 'Pending' : 'ממתינות',
+      name: 'Pending',
       value: pendingCount,
       color: '#E2DDD5'
     }
@@ -146,14 +138,10 @@ export const SubtaskProgressChart: React.FC<SubtaskProgressChartProps> = ({ case
           <ListTodo className="w-5 h-5 text-[#145A52]" />
           <div>
             <h2 className="font-serif-display text-xl font-bold text-[#1C2826]">
-              {language === 'pt'
-                ? 'Progresso das Etapas & Sub-tarefas'
-                : language === 'en'
-                ? 'Sub-task Progress & Milestones'
-                : 'התקדמות שלבי המשנה'}
+              {'Sub-task Progress & Milestones'}
             </h2>
             <span className="text-xs text-[#62726F]">
-              {completedCount} de {totalCount} etapas concluídas ({percentage}%)
+              {completedCount} of {totalCount} steps completed ({percentage}%)
             </span>
           </div>
         </div>
@@ -256,8 +244,8 @@ export const SubtaskProgressChart: React.FC<SubtaskProgressChartProps> = ({ case
                     formatter={(value: any, name: any) => [
                       value,
                       name === 'Completed'
-                        ? language === 'pt' ? 'Concluídas' : 'Completed'
-                        : language === 'pt' ? 'Pendentes' : 'Pending'
+                        ? 'Completed'
+                        : 'Pending'
                     ]}
                     contentStyle={{ backgroundColor: '#0E3F3A', borderRadius: '12px', color: '#fff', fontSize: '12px' }}
                   />
@@ -284,7 +272,7 @@ export const SubtaskProgressChart: React.FC<SubtaskProgressChartProps> = ({ case
         <div className="md:col-span-7 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#145A52] uppercase tracking-wider">
-              {language === 'pt' ? 'Status Geral' : 'Overall Status'}
+              {'Overall Status'}
             </span>
 
             {totalCount > 0 && (
@@ -300,7 +288,7 @@ export const SubtaskProgressChart: React.FC<SubtaskProgressChartProps> = ({ case
                   onClick={() => handleToggleAll(false)}
                   className="text-[#62726F] hover:underline"
                 >
-                  Limpar seleção
+                  Clear selection
                 </button>
               </div>
             )}
@@ -318,15 +306,11 @@ export const SubtaskProgressChart: React.FC<SubtaskProgressChartProps> = ({ case
             {percentage === 100 ? (
               <span className="text-emerald-700 font-semibold flex items-center gap-1">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                {language === 'pt'
-                  ? 'Todas as sub-tarefas foram concluídas!'
-                  : 'All sub-tasks have been completed!'}
+                {'All sub-tasks have been completed!'}
               </span>
             ) : (
               <span>
-                {language === 'pt'
-                  ? `Faltam ${pendingCount} etapa(s) para o encerramento total deste caso.`
-                  : `${pendingCount} milestone(s) remaining for complete closure.`}
+                {`${pendingCount} milestone(s) remaining for complete closure.`}
               </span>
             )}
           </p>
@@ -373,7 +357,7 @@ export const SubtaskProgressChart: React.FC<SubtaskProgressChartProps> = ({ case
       <div className="space-y-2 pt-1">
         {subtasks.length > 0 ? (
           subtasks.map((st, index) => {
-            const stTitle = st.title[language] || st.title.pt;
+            const stTitle = st.title;
 
             return (
               <div
@@ -422,7 +406,7 @@ export const SubtaskProgressChart: React.FC<SubtaskProgressChartProps> = ({ case
                     <button
                       onClick={() => handleDeleteSubtask(st.id)}
                       className="text-[#62726F] hover:text-red-600 p-1 rounded-lg transition"
-                      title="Excluir sub-tarefa"
+                      title="Delete sub-task"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

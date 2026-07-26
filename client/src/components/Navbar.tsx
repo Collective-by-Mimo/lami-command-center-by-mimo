@@ -14,15 +14,15 @@ export const Navbar: React.FC = () => {
 
   // Updated to reflect new tabs and icon/badge logic
   const navItems = [
-    { id: 'briefing', label: { pt: 'Briefing', en: 'Briefing', he: 'תדריך' }[language], icon: Newspaper },
-    { id: 'cases', label: { pt: 'Casos', en: 'Cases', he: 'תיקים' }[language], icon: Layers },
-    { id: 'finance', label: { pt: 'Finanças', en: 'Finance', he: 'כספים' }[language], icon: Wallet },
-    { id: 'utilities', label: { pt: 'Contas', en: 'Bills', he: 'חשבונות' }[language], icon: Receipt },
-    { id: 'archive', label: { pt: 'Arquivo', en: 'Archive', he: 'ארכיון' }[language], icon: Archive },
+    { id: 'briefing', label: 'Briefing', icon: Newspaper },
+    { id: 'cases', label: 'Cases', icon: Layers },
+    { id: 'finance', label: 'Finance', icon: Wallet },
+    { id: 'utilities', label: 'Bills', icon: Receipt },
+    { id: 'archive', label: 'Archive', icon: Archive },
   ];
 
   // Logic for notification dot (if any pending decisions in cases)
-  const hasPending = cases.some(c => c.clientState === '🔔 Aguardando você');
+  const hasPending = cases.some(c => c.clientState === '🔔 Awaiting you');
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 h-[72px] pb-safe bg-white border-t border-[#E7E1D5] flex items-center justify-around z-50">

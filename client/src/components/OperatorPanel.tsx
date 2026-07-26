@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { getTranslation } from '../i18n/translations';
 import { Sparkles, Edit3, Save, Download, RefreshCw, Shield, FileText, Bell, CheckCircle2, MessageSquare, Send, PlusCircle, Check } from 'lucide-react';
 
 export const OperatorPanel: React.FC = () => {
@@ -13,12 +12,11 @@ export const OperatorPanel: React.FC = () => {
     resetAllData,
     handoffs,
     resolveHandoff,
-    createNewCase,
-    language
+    createNewCase
   } = useApp();
 
   const [isEditingBriefing, setIsEditingBriefing] = useState(false);
-  const [briefingEN, setBriefingEN] = useState(briefing.prose.en);
+  const [briefingEN, setBriefingEN] = useState(briefing.prose);
 
   // State for Handoff queue management
   const [handoffTab, setHandoffTab] = useState<'pending' | 'resolved'>('pending');
@@ -29,7 +27,7 @@ export const OperatorPanel: React.FC = () => {
   const handleSaveBriefing = () => {
     // English-only build: store the English text across all locale fields so
     // the (retained) I18nText shape stays consistent.
-    updateBriefingText({ pt: briefingEN, en: briefingEN, he: briefingEN });
+    updateBriefingText(briefingEN);
     setIsEditingBriefing(false);
   };
 
@@ -54,22 +52,14 @@ export const OperatorPanel: React.FC = () => {
   const handleCreateCaseFromHandoff = (h: any) => {
     createNewCase({
       emoji: '🛎️',
-      title: {
-        pt: h.clientQuestion,
-        en: h.clientQuestion,
-        he: h.clientQuestion
-      },
-      clientState: '✅ Em nossas mãos',
-      internalStatus: 'Aberto',
-      priority: 'Alta',
+      title: h.clientQuestion,
+      clientState: '✅ In our hands',
+      internalStatus: 'Open',
+      priority: 'High',
       isRecurring: false,
-      nextStep: {
-        pt: 'Solicitação do cliente convertida em caso ativo pelo Mimo.',
-        en: 'Client inquiry converted into active case by Mimo.',
-        he: 'פניית הלקוח הומרה לתיק פעיל על ידי מימו.'
-      }
+      nextStep: 'Client inquiry converted into active case by Mimo.'
     });
-    resolveHandoff(h.id, 'Convertido em novo caso executivo.');
+    resolveHandoff(h.id, 'Converted into a new executive case.');
   };
 
   return (
@@ -81,10 +71,10 @@ export const OperatorPanel: React.FC = () => {
           <Shield className="w-5 h-5 text-[#B8912E]" />
           <div>
             <h3 className="font-serif-display font-bold text-base text-[#F7F5F1]">
-              Painel do Operador · Movsum "Mimo"
+              Operator Panel · Movsum "Mimo"
             </h3>
             <p className="text-[10px] text-[#E2DDD5]/70">
-              Central de Atendimento Executivo e Gestão de Casos
+              Executive Concierge & Case Management Center
             </p>
           </div>
         </div>
@@ -93,7 +83,7 @@ export const OperatorPanel: React.FC = () => {
           onClick={() => setIsOperator(false)}
           className="text-xs text-[#E2DDD5] bg-black/30 hover:bg-black/50 px-3 py-1 rounded-full border border-white/10 transition"
         >
-          Fechar Modo Operador
+          Close Operator Mode
         </button>
       </div>
 
@@ -115,7 +105,7 @@ export const OperatorPanel: React.FC = () => {
                   : 'text-[#E2DDD5]/70 hover:text-white'
               }`}
             >
-              <span>Pendentes</span>
+              <span>Pending</span>
               <span className="bg-amber-500 text-black text-[10px] font-bold px-1.5 py-0.2 rounded-full">
                 {pendingHandoffs.length}
               </span>
@@ -129,7 +119,7 @@ export const OperatorPanel: React.FC = () => {
                   : 'text-[#E2DDD5]/70 hover:text-white'
               }`}
             >
-              <span>Atendidos</span>
+              <span>Resolved</span>
               <span className="bg-white/20 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
                 {resolvedHandoffs.length}
               </span>
@@ -151,10 +141,10 @@ export const OperatorPanel: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <span className="inline-flex items-center gap-1 text-[10px] bg-amber-500/20 text-amber-300 font-semibold px-2 py-0.5 rounded-md border border-amber-500/30">
                           <MessageSquare className="w-3 h-3 text-amber-300" />
-                          Dúvida do Cliente
+                          Client Question
                         </span>
                         <span className="text-[10px] text-[#E2DDD5]/60 font-mono">
-                          Idioma: {h.language.toUpperCase()} • {new Date(h.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          Language: {h.language.toUpperCase()} • {new Date(h.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                       <p className="font-sans text-[#F7F5F1] font-medium text-xs leading-relaxed pl-0.5">
@@ -168,7 +158,7 @@ export const OperatorPanel: React.FC = () => {
                     <textarea
                       value={replyInputs[h.id] || ''}
                       onChange={(e) => handleReplyChange(h.id, e.target.value)}
-                      placeholder="Digite sua resposta direta para a cliente Layla..."
+                      placeholder="Type your direct reply to Layla..."
                       rows={2}
                       className="w-full p-2.5 bg-[#F7F5F1] text-[#1C2826] placeholder:text-gray-400 rounded-xl border border-white/20 text-xs focus:outline-none focus:ring-1 focus:ring-[#B8912E]"
                     />
@@ -179,16 +169,16 @@ export const OperatorPanel: React.FC = () => {
                         className="text-[11px] bg-white/10 hover:bg-white/20 text-amber-200 px-2.5 py-1.5 rounded-lg border border-amber-500/30 transition flex items-center gap-1"
                       >
                         <PlusCircle className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Converter em Caso</span>
+                        <span>Convert to Case</span>
                       </button>
 
                       <div className="flex items-center gap-1.5 ml-auto">
                         <button
                           onClick={() => resolveHandoff(h.id)}
                           className="text-[11px] text-[#E2DDD5]/70 hover:text-white px-2.5 py-1.5 bg-black/20 hover:bg-black/40 rounded-lg transition"
-                          title="Marcar resolvido sem enviar texto"
+                          title="Mark resolved without sending text"
                         >
-                          Resolver sem Resposta
+                          Resolve without Reply
                         </button>
 
                         <button
@@ -197,7 +187,7 @@ export const OperatorPanel: React.FC = () => {
                           className="text-xs bg-[#B8912E] hover:bg-[#d1a73d] disabled:opacity-40 text-[#0E3F3A] font-bold px-3.5 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1.5"
                         >
                           <Send className="w-3.5 h-3.5" />
-                          <span>Responder e Sincronizar</span>
+                          <span>Reply & Sync</span>
                         </button>
                       </div>
                     </div>
@@ -224,27 +214,27 @@ export const OperatorPanel: React.FC = () => {
                   <div className="flex items-center justify-between text-[10px] text-[#E2DDD5]/60">
                     <span className="flex items-center gap-1 text-emerald-400 font-medium">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                      Atendido pelo Mimo
+                      Resolved by Mimo
                     </span>
                     <span className="font-mono">
-                      {h.resolvedAt ? new Date(h.resolvedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recente'}
+                      {h.resolvedAt ? new Date(h.resolvedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent'}
                     </span>
                   </div>
 
                   <p className="text-xs text-[#E2DDD5] font-medium">
-                    <span className="text-[#B8912E] font-semibold">Pergunta:</span> "{h.clientQuestion}"
+                    <span className="text-[#B8912E] font-semibold">Question:</span> "{h.clientQuestion}"
                   </p>
 
                   {h.operatorResponse && (
                     <p className="text-xs text-emerald-200 bg-emerald-950/40 p-2 rounded-lg border border-emerald-500/20 italic">
-                      <span className="text-emerald-400 font-semibold not-italic">Resposta do Mimo:</span> "{h.operatorResponse}"
+                      <span className="text-emerald-400 font-semibold not-italic">Mimo's Reply:</span> "{h.operatorResponse}"
                     </p>
                   )}
                 </div>
               ))
             ) : (
               <p className="text-xs text-[#E2DDD5]/70 italic bg-black/10 p-3 rounded-xl border border-white/5">
-                Nenhum histórico de atendimentos resolvidos.
+                No resolved handoff history yet.
               </p>
             )}
           </div>
@@ -256,7 +246,7 @@ export const OperatorPanel: React.FC = () => {
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold text-[#B8912E] flex items-center gap-1.5">
             <FileText className="w-4 h-4" />
-            {getTranslation('editBriefing', language)}
+            {"Edit Today's Briefing"}
           </span>
           <button
             onClick={() => setIsEditingBriefing(!isEditingBriefing)}
@@ -283,12 +273,12 @@ export const OperatorPanel: React.FC = () => {
               className="w-full py-2.5 bg-[#B8912E] text-[#0E3F3A] font-bold rounded-xl hover:bg-[#d1a73d] transition flex items-center justify-center gap-1.5"
             >
               <Save className="w-4 h-4" />
-              <span>{getTranslation('saveBriefing', language)}</span>
+              <span>{"Save Briefing"}</span>
             </button>
           </div>
         ) : (
           <p className="text-xs text-[#E2DDD5] italic bg-black/10 p-3 rounded-xl border border-white/5">
-            "{briefing.prose.en}"
+            "{briefing.prose}"
           </p>
         )}
       </div>
@@ -300,7 +290,7 @@ export const OperatorPanel: React.FC = () => {
           className="flex-1 py-2 px-3 bg-[#145A52] hover:bg-[#1A7067] rounded-xl text-white font-medium flex items-center justify-center gap-1.5 transition border border-white/10"
         >
           <Download className="w-3.5 h-3.5 text-[#B8912E]" />
-          <span>{getTranslation('exportData', language)}</span>
+          <span>{"Export Backup (JSON)"}</span>
         </button>
 
         <button
@@ -312,7 +302,7 @@ export const OperatorPanel: React.FC = () => {
           className="py-2 px-3 bg-red-900/30 hover:bg-red-900/50 text-red-200 border border-red-500/30 rounded-xl font-medium flex items-center justify-center gap-1.5 transition"
         >
           <RefreshCw className="w-3.5 h-3.5" />
-          <span>{getTranslation('resetSeed', language)}</span>
+          <span>{"Reset Seed Data"}</span>
         </button>
       </div>
 

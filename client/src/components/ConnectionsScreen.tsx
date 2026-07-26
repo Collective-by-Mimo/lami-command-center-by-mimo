@@ -13,14 +13,10 @@ export const ConnectionsScreen: React.FC = () => {
   const { language, setCurrentView, isRTL } = useApp();
 
   const t = {
-    title: { pt: 'Conexões', en: 'Connections', he: 'חיבורים' }[language],
-    subtitle: {
-      pt: 'Atalhos para os portais oficiais — sem credenciais armazenadas',
-      en: 'Shortcuts to official portals — no credentials stored',
-      he: 'קיצורי דרך לפורטלים הרשמיים — ללא שמירת פרטי התחברות'
-    }[language],
-    back: { pt: 'Voltar ao Briefing', en: 'Back to Briefing', he: 'חזרה לתדריך' }[language],
-    open: { pt: 'Abrir portal', en: 'Open portal', he: 'פתח פורטל' }[language]
+    title: 'Connections',
+    subtitle: 'Shortcuts to official portals — no credentials stored',
+    back: 'Back to Briefing',
+    open: 'Open portal'
   };
 
   return (
@@ -65,7 +61,7 @@ export const ConnectionsScreen: React.FC = () => {
             </span>
             <div>
               <p className="text-[13px] text-[#2C2C2C] font-medium leading-snug">
-                {provider.tagline[language] || provider.tagline.pt}
+                {provider.tagline}
               </p>
               <p className="font-mono text-[11px] text-[#999999] mt-1">{provider.host}</p>
             </div>

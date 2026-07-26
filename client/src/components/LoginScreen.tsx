@@ -13,41 +13,13 @@ export const LoginScreen: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const labels = {
-    subtitle: {
-      pt: 'Seu mundo, organizado com discrição.',
-      en: 'Your world, quietly in order.',
-      he: 'עולמך, מסודר בשקט.'
-    },
-    usernameLabel: {
-      pt: 'Nome de Usuário',
-      en: 'Username',
-      he: 'שם משתמש'
-    },
-    passwordLabel: {
-      pt: 'Senha de Acesso',
-      en: 'Access Password',
-      he: 'סיסמת גישה'
-    },
-    usernamePlaceholder: {
-      pt: 'Informe seu usuário',
-      en: 'Enter your username',
-      he: 'הזן שם משתמש'
-    },
-    loginButton: {
-      pt: 'Entrar',
-      en: 'Enter',
-      he: 'כניסה'
-    },
-    errorMsg: {
-      pt: 'Usuário ou senha incorretos. Acesso restrito.',
-      en: 'Invalid username or password. Restricted access.',
-      he: 'שם משתמש או סיסמה שגויים. הגישה מוגבלת.'
-    },
-    encryptedNote: {
-      pt: 'Acesso privado • Mimo Collective Dubai',
-      en: 'Private access • Mimo Collective Dubai',
-      he: 'גישה פרטית • מימו קולקטיב דובאי'
-    }
+    subtitle: 'Your world, quietly in order.',
+    usernameLabel: 'Username',
+    passwordLabel: 'Access Password',
+    usernamePlaceholder: 'Enter your username',
+    loginButton: 'Enter',
+    errorMsg: 'Invalid username or password. Restricted access.',
+    encryptedNote: 'Private access • Mimo Collective Dubai'
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -62,7 +34,7 @@ export const LoginScreen: React.FC = () => {
 
       if (!success) {
         hapticWarning();
-        setErrorMessage(labels.errorMsg[language]);
+        setErrorMessage(labels.errorMsg);
       }
     }, 400);
   };
@@ -104,7 +76,7 @@ export const LoginScreen: React.FC = () => {
               <span className="text-[14px] font-sans font-light text-[#5C7A76] ml-2 tracking-widest uppercase align-middle">Dubai</span>
             </h1>
             <p className="mt-2 text-[12px] text-[#7A8C8A] leading-relaxed font-light tracking-wide">
-              {labels.subtitle[language]}
+              {labels.subtitle}
             </p>
           </div>
 
@@ -128,14 +100,14 @@ export const LoginScreen: React.FC = () => {
             {/* Username */}
             <div className="space-y-1">
               <label className="block text-[10px] font-semibold text-[#B8912E] uppercase tracking-widest">
-                {labels.usernameLabel[language]}
+                {labels.usernameLabel}
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                placeholder={labels.usernamePlaceholder[language]}
+                placeholder={labels.usernamePlaceholder}
                 className="w-full bg-transparent border-b-2 border-[#C8C0B0] focus:border-[#B8912E] py-2.5 text-[14px] text-[#1A3330] placeholder-[#B0A898] outline-none transition-colors"
                 autoCapitalize="none"
                 autoCorrect="off"
@@ -145,7 +117,7 @@ export const LoginScreen: React.FC = () => {
             {/* Password */}
             <div className="space-y-1">
               <label className="block text-[10px] font-semibold text-[#B8912E] uppercase tracking-widest">
-                {labels.passwordLabel[language]}
+                {labels.passwordLabel}
               </label>
               <div className="relative">
                 <input
@@ -181,12 +153,12 @@ export const LoginScreen: React.FC = () => {
               {isSubmitting ? (
                 <span className="flex items-center gap-2">
                   <Sparkles className="w-4 h-4 animate-spin" />
-                  {{ pt: 'Verificando...', en: 'Verifying...', he: 'מאמת...' }[language]}
+                  {'Verifying...'}
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
                   <Lock className="w-4 h-4" />
-                  {labels.loginButton[language]}
+                  {labels.loginButton}
                 </span>
               )}
             </button>
@@ -207,7 +179,7 @@ export const LoginScreen: React.FC = () => {
                 className="w-full py-3 rounded-xl text-[13px] text-[#145A52] border border-[#145A52]/25 hover:bg-[#145A52]/5 active:scale-[0.98] transition flex items-center justify-center gap-2"
               >
                 <Fingerprint className="w-4 h-4" />
-                {{ pt: 'Biometria', en: 'Biometric login', he: 'כניסה ביומטרית' }[language]}
+                {'Biometric login'}
               </button>
             )}
           </form>
@@ -215,7 +187,7 @@ export const LoginScreen: React.FC = () => {
           {/* Footer */}
           <div className="mt-6 pt-4 text-center border-t border-[#B8912E]/15 flex items-center justify-center gap-1.5 text-[10px] text-[#9A8E82] font-mono tracking-wide">
             <ShieldCheck className="w-3 h-3 text-[#B8912E]" />
-            <span>{labels.encryptedNote[language]}</span>
+            <span>{labels.encryptedNote}</span>
           </div>
         </div>
       </div>

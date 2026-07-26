@@ -5,7 +5,6 @@
  */
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { getTranslation } from '../i18n/translations';
 import { CaseItem, I18nText } from '../types';
 import { SubtaskProgressChart } from './SubtaskProgressChart';
 import { motion, AnimatePresence } from 'motion/react';
@@ -59,20 +58,20 @@ export const CaseDetailScreen: React.FC = () => {
           onClick={() => setCurrentView('cases')}
           className="text-xs font-semibold bg-[#145A52] text-white px-4 py-2 rounded-xl"
         >
-          {getTranslation('backToCases', language)}
+          {"← Back to cases"}
         </button>
       </div>
     );
   }
 
-  const titleText = caseItem.title[language] || caseItem.title.pt;
-  const nextStepText = caseItem.nextStep[language] || caseItem.nextStep.pt;
+  const titleText = caseItem.title;
+  const nextStepText = caseItem.nextStep;
 
   // English display labels for the clientState enum (stored value stays as-is)
   const STATE_LABEL: Record<string, string> = {
-    '🔔 Aguardando você': '🔔 Awaiting you',
-    '✅ Em nossas mãos': '✅ In our hands',
-    '✔️ Concluído': '✔️ Completed'
+    '🔔 Awaiting you': '🔔 Awaiting you',
+    '✅ In our hands': '✅ In our hands',
+    '✔️ Completed': '✔️ Completed'
   };
   const clientStateLabel = STATE_LABEL[caseItem.clientState] || caseItem.clientState;
 
@@ -80,11 +79,7 @@ export const CaseDetailScreen: React.FC = () => {
     e.preventDefault();
     if (!newTimelineText.trim()) return;
 
-    const content: I18nText = {
-      pt: newTimelineText,
-      en: newTimelineText,
-      he: newTimelineText
-    };
+    const content: I18nText = newTimelineText;
 
     const photos = photoUrlInput.trim() ? [photoUrlInput.trim()] : [];
     addTimelineUpdate(caseItem.id, content, photos);
@@ -98,14 +93,10 @@ export const CaseDetailScreen: React.FC = () => {
       return;
     }
 
-    const proofNote: I18nText = {
-      pt: proofNoteText,
-      en: proofNoteText,
-      he: proofNoteText
-    };
+    const proofNote: I18nText = proofNoteText;
 
     markComplete(caseItem.id, proofNote, proofPhotoUrl || undefined);
-    notifyCaseCompleted(caseItem.title.pt);
+    notifyCaseCompleted(caseItem.title);
     hapticSuccess();
     setShowCompleteModal(false);
   };
@@ -136,7 +127,7 @@ export const CaseDetailScreen: React.FC = () => {
         className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#145A52] bg-white px-3.5 py-2 rounded-full border border-[#E7E1D5] active:scale-[0.97] transition-transform"
       >
         <ArrowLeft className={`w-3.5 h-3.5 ${isRTL ? 'rotate-180' : ''}`} />
-        <span>{getTranslation('backToCases', language)}</span>
+        <span>{"← Back to cases"}</span>
       </button>
 
       {/* Case Header Card */}
@@ -163,9 +154,9 @@ export const CaseDetailScreen: React.FC = () => {
               <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                 <span
                   className={`text-xs font-semibold px-3 py-0.5 rounded-full ${
-                    caseItem.clientState === '🔔 Aguardando você'
+                    caseItem.clientState === '🔔 Awaiting you'
                       ? 'bg-[#FBF6E8] text-[#B8912E] border border-[#B8912E]/40 lami-pulse'
-                      : caseItem.clientState === '✔️ Concluído'
+                      : caseItem.clientState === '✔️ Completed'
                         ? 'bg-[#F1F1EF] text-[#6B7280] border border-[#D5D5D0]'
                         : 'bg-[#EEF7F5] text-[#145A52] border border-[#145A52]/20'
                   }`}
@@ -186,7 +177,7 @@ export const CaseDetailScreen: React.FC = () => {
         {/* Next Step Box */}
         <div className="bg-[#EEF7F5] p-4 rounded-2xl space-y-1">
           <span className="text-[11px] font-semibold text-[#145A52] uppercase tracking-wider block">
-            {getTranslation('nextStepLabel', language)}
+            {"Next step"}
           </span>
           <p className="text-[14px] text-[#1A1A1A] font-medium leading-[1.6]">
             {nextStepText}
@@ -208,26 +199,26 @@ export const CaseDetailScreen: React.FC = () => {
                 }}
                 className="bg-[#F7F5F1] border border-[#E2DDD5] rounded-lg px-2 py-1 font-semibold text-[#145A52]"
               >
-                <option value="🔔 Aguardando você">🔔 Awaiting you</option>
-                <option value="✅ Em nossas mãos">✅ In our hands</option>
-                <option value="✔️ Concluído">✔️ Completed</option>
+                <option value="🔔 Awaiting you">🔔 Awaiting you</option>
+                <option value="✅ In our hands">✅ In our hands</option>
+                <option value="✔️ Completed">✔️ Completed</option>
               </select>
             </div>
 
-            {caseItem.clientState !== '✔️ Concluído' && (
+            {caseItem.clientState !== '✔️ Completed' && (
               <button
                 onClick={() => setShowCompleteModal(true)}
                 className="bg-[#B8912E] text-white px-3 py-1.5 rounded-lg font-semibold hover:bg-[#967422] transition flex items-center gap-1 shadow-xs"
               >
                 <Award className="w-3.5 h-3.5" />
-                <span>{getTranslation('markComplete', language)}</span>
+                <span>{"Complete Case (With Proof)"}</span>
               </button>
             )}
-            {caseItem.clientState === '✅ Em nossas mãos' && caseItem.decision && !caseItem.decision.resolvedOptionId && (
+            {caseItem.clientState === '✅ In our hands' && caseItem.decision && !caseItem.decision.resolvedOptionId && (
               <button
                 onClick={() => {
-                  updateCaseDetails({ ...caseItem, clientState: '🔔 Aguardando você' });
-                  notifyAwaitingApproval(caseItem.title.pt);
+                  updateCaseDetails({ ...caseItem, clientState: '🔔 Awaiting you' });
+                  notifyAwaitingApproval(caseItem.title);
                   showToast('Client notified — awaiting approval.');
                 }}
                 className="bg-[#145A52] text-white px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1 shadow-xs"
@@ -247,15 +238,15 @@ export const CaseDetailScreen: React.FC = () => {
         <section className="lami-card space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-serif-display text-[22px] font-semibold text-[#0E3F3A] flex items-center gap-2">
-              <span>{getTranslation('quotationTitle', language)}</span>
+              <span>{"Quotation Comparison"}</span>
             </h2>
           </div>
 
           <div className="space-y-3">
             {caseItem.quotations.map((q) => {
-              const qTitle = q.title[language] || q.title.pt;
-              const qObs = q.observation ? (q.observation[language] || q.observation.pt) : '';
-              const qReason = q.recommendationReason ? (q.recommendationReason[language] || q.recommendationReason.pt) : '';
+              const qTitle = q.title;
+              const qObs = q.observation ? (q.observation) : '';
+              const qReason = q.recommendationReason ? (q.recommendationReason) : '';
 
               return (
                 <div
@@ -271,7 +262,7 @@ export const CaseDetailScreen: React.FC = () => {
                       {q.isRecommended && (
                         <span className="inline-flex items-center gap-1 text-[11px] font-bold text-white bg-[#B8912E] px-2.5 py-0.5 rounded-full mb-1">
                           <Star className="w-3 h-3 text-white fill-white" />
-                          {getTranslation('recommendedBadge', language)}
+                          {"★ Recommended by Mimo"}
                         </span>
                       )}
                       <h3 className="font-serif-display font-semibold text-[18px] text-[#0E3F3A]">
@@ -291,7 +282,7 @@ export const CaseDetailScreen: React.FC = () => {
                       </span>
                       {q.timeline && (
                         <span className="block text-[11px] text-[#62726F]">
-                          {q.timeline[language] || q.timeline.pt}
+                          {q.timeline}
                         </span>
                       )}
                     </div>
@@ -306,7 +297,7 @@ export const CaseDetailScreen: React.FC = () => {
             <div className="pt-2">
               <div className="bg-[#FBF6E8] p-4 rounded-2xl border border-[#B8912E]/30 space-y-3">
                 <p className="text-xs text-[#1C2826] font-medium leading-relaxed">
-                  {caseItem.decision.prompt[language] || caseItem.decision.prompt.pt}
+                  {caseItem.decision.prompt}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2">
                   {caseItem.decision.options.map((opt) => {
@@ -333,12 +324,12 @@ export const CaseDetailScreen: React.FC = () => {
                             className="flex items-center gap-1.5"
                           >
                             <Check className="w-4 h-4 text-white" />
-                            <span>{language === 'pt' ? 'Aprovado ✓' : language === 'en' ? 'Approved ✓' : '✓ אושר'}</span>
+                            <span>{'Approved ✓'}</span>
                           </motion.span>
                         ) : (
                           <>
                             <Check className="w-3.5 h-3.5 text-[#B8912E]" />
-                            <span>{opt.label[language] || opt.label.pt}</span>
+                            <span>{opt.label}</span>
                           </>
                         )}
                       </motion.button>
@@ -356,10 +347,10 @@ export const CaseDetailScreen: React.FC = () => {
         <div className="bg-gradient-to-br from-[#145A52] to-[#0E3F3A] text-white rounded-3xl p-6 shadow-md border border-[#B8912E]/40 space-y-3">
           <div className="flex items-center gap-2 text-[#B8912E] font-semibold text-xs tracking-wider uppercase">
             <ShieldCheck className="w-4 h-4" />
-            <span>{getTranslation('proofTitle', language)}</span>
+            <span>{"Completion Proof & Receipt"}</span>
           </div>
           <p className="text-sm font-medium leading-relaxed text-[#F7F5F1]">
-            {caseItem.completionProof.note[language] || caseItem.completionProof.note.pt}
+            {caseItem.completionProof.note}
           </p>
           {caseItem.completionProof.photoUrl && (
             <div
@@ -390,7 +381,7 @@ export const CaseDetailScreen: React.FC = () => {
         <div className="flex items-center justify-between border-b border-[#E2DDD5] pb-3">
           <h2 className="font-serif-display text-[22px] font-semibold text-[#0E3F3A] flex items-center gap-2">
             <Clock className="w-4 h-4 text-[#145A52]" />
-            <span>{getTranslation('timelineTitle', language)}</span>
+            <span>{"History & Timeline"}</span>
           </h2>
           <span className="text-xs text-[#62726F] font-mono">
             {caseItem.timeline.length} entries
@@ -433,7 +424,7 @@ export const CaseDetailScreen: React.FC = () => {
         {/* Timeline Items */}
         <div className="relative pl-4 border-l-2 border-[#145A52]/20 space-y-6">
           {caseItem.timeline.map((entry) => {
-            const contentText = entry.content[language] || entry.content.pt;
+            const contentText = entry.content;
 
             return (
               <div key={entry.id} className="relative group">

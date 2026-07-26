@@ -1,7 +1,6 @@
 import React from 'react';
 import { CaseItem } from '../types';
 import { useApp } from '../context/AppContext';
-import { getTranslation } from '../i18n/translations';
 import { ArrowRight, Clock, Repeat, AlertCircle, MessageCircle } from 'lucide-react';
 import { openMimoCaseWhatsApp } from '../services/whatsapp';
 import { hapticTap } from '../utils/haptics';
@@ -14,17 +13,17 @@ interface CaseCardProps {
 export const CaseCard: React.FC<CaseCardProps> = ({ caseItem, onClick }) => {
   const { language, isOperator, isRTL } = useApp();
 
-  const isWaiting = caseItem.clientState === '🔔 Aguardando você';
-  const isInProgress = caseItem.clientState === '✅ Em nossas mãos';
-  const isCompleted = caseItem.clientState === '✔️ Concluído';
+  const isWaiting = caseItem.clientState === '🔔 Awaiting you';
+  const isInProgress = caseItem.clientState === '✅ In our hands';
+  const isCompleted = caseItem.clientState === '✔️ Completed';
 
-  const titleText = caseItem.title[language] || caseItem.title.pt;
-  const nextStepText = caseItem.nextStep[language] || caseItem.nextStep.pt;
+  const titleText = caseItem.title;
+  const nextStepText = caseItem.nextStep;
 
   const chipLabels = {
-    waiting: { pt: '🔔 Aguardando você', en: '🔔 Awaiting you', he: '🔔 ממתין לך' }[language],
-    inProgress: { pt: '✓ Em andamento', en: '✓ In progress', he: '✓ בתהליך' }[language],
-    completed: { pt: '✓ Concluído', en: '✓ Completed', he: '✓ הושלם' }[language]
+    waiting: '🔔 Awaiting you',
+    inProgress: '✓ In progress',
+    completed: '✓ Completed'
   };
 
   // Accent strip color based on card type
@@ -108,7 +107,7 @@ export const CaseCard: React.FC<CaseCardProps> = ({ caseItem, onClick }) => {
             />
           </div>
           <span className="font-mono text-[10px] text-[#145A52] font-semibold shrink-0">
-            {caseItem.subtasks.filter((s) => s.completed).length}/{caseItem.subtasks.length} etapas ({Math.round(
+            {caseItem.subtasks.filter((s) => s.completed).length}/{caseItem.subtasks.length} steps ({Math.round(
               (caseItem.subtasks.filter((s) => s.completed).length / caseItem.subtasks.length) * 100
             )}%)
           </span>
@@ -119,9 +118,9 @@ export const CaseCard: React.FC<CaseCardProps> = ({ caseItem, onClick }) => {
       {isOperator && (
         <div className="mt-2 pt-2 border-t border-[#E2DDD5]/60 flex items-center gap-2 text-[10px]">
           <span className="bg-[#0E3F3A] text-white px-2 py-0.5 rounded-full font-mono">
-            Interno: {caseItem.internalStatus}
+            Internal: {caseItem.internalStatus}
           </span>
-          {caseItem.priority === 'Alta' && (
+          {caseItem.priority === 'High' && (
             <span className="bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-semibold flex items-center gap-0.5">
               <AlertCircle className="w-2.5 h-2.5" />
               Alta

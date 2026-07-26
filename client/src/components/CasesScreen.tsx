@@ -7,7 +7,6 @@
 import React, { useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { CaseCard } from './CaseCard';
-import { getTranslation } from '../i18n/translations';
 import { Search, Plus, X, ChevronDown } from 'lucide-react';
 import { CaseItem } from '../types';
 import { AnimatePresence, motion } from 'motion/react';
@@ -31,26 +30,26 @@ export const CasesScreen: React.FC = () => {
   const [newCatName, setNewCatName] = useState('');
 
   const filters = [
-    { id: 'all', label: { pt: 'Todos', en: 'All', he: 'הכל' } },
-    { id: 'waiting', label: { pt: '🔔 Aguardando', en: '🔔 Awaiting', he: '🔔 ממתין' } },
-    { id: 'inHand', label: { pt: '✅ Em andamento', en: '✅ In progress', he: '✅ בתהליך' } },
-    { id: 'completed', label: { pt: '✔️ Concluídos', en: '✔️ Completed', he: '✔️ הושלמו' } }
+    { id: 'all', label: 'All' },
+    { id: 'waiting', label: '🔔 Awaiting' },
+    { id: 'inHand', label: '✅ In progress' },
+    { id: 'completed', label: '✔️ Completed' }
   ];
 
-  const searchPlaceholder = { pt: 'Buscar casos...', en: 'Search cases...', he: 'חיפוש תיקים...' }[language];
-  const allCategoriesLabel = { pt: 'Todas', en: 'All', he: 'הכל' }[language];
-  const casesWord = { pt: 'casos', en: 'cases', he: 'תיקים' }[language];
-  const caseWord = { pt: 'caso', en: 'case', he: 'תיק' }[language];
+  const searchPlaceholder = 'Search cases...';
+  const allCategoriesLabel = 'All';
+  const casesWord = 'cases';
+  const caseWord = 'case';
 
   const stateFilteredCases = useMemo(
     () =>
       cases.filter((c) => {
-        if (filterState === 'waiting' && c.clientState !== '🔔 Aguardando você') return false;
-        if (filterState === 'inHand' && c.clientState !== '✅ Em nossas mãos') return false;
-        if (filterState === 'completed' && c.clientState !== '✔️ Concluído') return false;
+        if (filterState === 'waiting' && c.clientState !== '🔔 Awaiting you') return false;
+        if (filterState === 'inHand' && c.clientState !== '✅ In our hands') return false;
+        if (filterState === 'completed' && c.clientState !== '✔️ Completed') return false;
         if (query.trim()) {
           const q = query.trim().toLowerCase();
-          const hay = `${c.title.pt} ${c.title.en} ${c.title.he} ${c.emoji}`.toLowerCase();
+          const hay = `${c.title} ${c.emoji}`.toLowerCase();
           if (!hay.includes(q)) return false;
         }
         return true;
@@ -94,12 +93,12 @@ export const CasesScreen: React.FC = () => {
 
   const handleCreate = () => {
     if (!newTitle.trim()) return;
-    const title = { pt: newTitle.trim(), en: newTitle.trim(), he: newTitle.trim() };
+    const title = newTitle.trim();
     createNewCase({
       emoji: newEmoji || '✨',
       title,
-      clientState: '✅ Em nossas mãos',
-      internalStatus: 'Aberto',
+      clientState: '✅ In our hands',
+      internalStatus: 'Open',
       priority: 'Normal',
       category: newCategory,
       subcategory: newSubcategory || undefined
@@ -128,7 +127,7 @@ export const CasesScreen: React.FC = () => {
     <div className="space-y-5 pb-28 pt-6 px-4 relative">
       {/* Screen title */}
       <h1 className="font-serif-display text-[28px] text-[#0E3F3A]">
-        {getTranslation('navCases', language)}
+        {"Your Cases"}
       </h1>
 
       {/* Search pill */}
@@ -156,7 +155,7 @@ export const CasesScreen: React.FC = () => {
               filterState === f.id ? 'bg-[#145A52] text-white' : 'bg-white text-[#145A52]'
             }`}
           >
-            {f.label[language]}
+            {f.label}
           </button>
         ))}
       </div>
@@ -185,7 +184,7 @@ export const CasesScreen: React.FC = () => {
               selectedCategory === cat.id ? 'bg-[#B8912E] text-white' : 'bg-white text-[#B8912E]'
             }`}
           >
-            {cat.emoji} {cat.label[language] || cat.label.pt}
+            {cat.emoji} {cat.label}
           </button>
         ))}
       </div>
@@ -202,7 +201,7 @@ export const CasesScreen: React.FC = () => {
                   className="w-full flex items-center gap-3"
                 >
                   <h3 className="text-[13px] font-semibold text-[#999999] tracking-[0.5px] shrink-0 font-serif-display">
-                    {category.emoji} {category.label[language] || category.label.pt}
+                    {category.emoji} {category.label}
                   </h3>
                   <span className="flex-1 h-px bg-[#E2DDD5]" />
                   <span className="text-[11px] font-medium text-[#145A52] bg-[#EEF7F5] px-2 py-0.5 rounded-full shrink-0">
@@ -253,7 +252,7 @@ export const CasesScreen: React.FC = () => {
       ) : (
         <div className="text-center py-12 text-[#999999]">
           <p className="font-serif-display italic text-[18px]">
-            {{ pt: 'Nenhum caso encontrado 🌿', en: 'No cases found 🌿', he: 'לא נמצאו תיקים 🌿' }[language]}
+            {'No cases found 🌿'}
           </p>
         </div>
       )}
@@ -326,7 +325,7 @@ export const CasesScreen: React.FC = () => {
                 >
                   {allCategories.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.emoji} {c.label[language] || c.label.pt}
+                      {c.emoji} {c.label}
                     </option>
                   ))}
                 </select>
@@ -341,7 +340,7 @@ export const CasesScreen: React.FC = () => {
                     <option value="">— Subcategory (optional) —</option>
                     {selectedCatDef.subcategories.map((s) => (
                       <option key={s.id} value={s.id}>
-                        {s.label[language] || s.label.pt}
+                        {s.label}
                       </option>
                     ))}
                   </select>

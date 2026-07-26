@@ -1,16 +1,18 @@
-export type Language = 'pt' | 'en' | 'he';
+export type Language = 'en';
 
-export type ClientState = '🔔 Aguardando você' | '✅ Em nossas mãos' | '✔️ Concluído';
+export type ClientState = '🔔 Awaiting you' | '✅ In our hands' | '✔️ Completed';
 
-export type InternalStatus = 'Aberto' | 'Aguardando aprovação' | 'Pausado' | 'Concluído';
+export type InternalStatus = 'Open' | 'Awaiting approval' | 'Paused' | 'Completed';
 
-export type Priority = 'Alta' | 'Normal';
+export type Priority = 'High' | 'Normal';
 
-export interface I18nText {
-  pt: string;
-  en: string;
-  he: string;
-}
+/**
+ * Single-language (English-only) app. `I18nText` is kept as a type alias for a
+ * plain string so existing field declarations (title, nextStep, content, …)
+ * need no churn, while all Portuguese/Hebrew content and the language switcher
+ * have been removed.
+ */
+export type I18nText = string;
 
 export interface TimelineEntry {
   id: string;

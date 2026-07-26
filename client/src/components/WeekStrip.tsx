@@ -19,7 +19,7 @@ export const WeekStrip: React.FC = () => {
   const { language, cases, keyDates, navigateToCaseDetail } = useApp();
   const [activeDay, setActiveDay] = useState<string | null>(null);
 
-  const locale = language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'pt-BR';
+  const locale = 'en-US';
 
   const days = useMemo(() => {
     const out: { key: string; date: Date; events: DayEvent[] }[] = [];
@@ -36,17 +36,17 @@ export const WeekStrip: React.FC = () => {
           events.push({
             id: `kd-${kd.id}`,
             emoji: kd.category === 'bill' ? '⚡' : kd.category === 'lease' ? '🏠' : kd.category === 'document' ? '🛂' : '📅',
-            label: kd.label[language] || kd.label.pt
+            label: kd.label
           });
         }
       });
       cases.forEach((c) => {
-        if (c.dueDate === key && c.clientState !== '✔️ Concluído') {
+        if (c.dueDate === key && c.clientState !== '✔️ Completed') {
           events.push({
             id: `case-${c.id}`,
             emoji: c.emoji,
-            label: c.title[language] || c.title.pt,
-            sub: c.nextStep[language] || c.nextStep.pt,
+            label: c.title,
+            sub: c.nextStep,
             caseId: c.id
           });
         }
@@ -58,11 +58,7 @@ export const WeekStrip: React.FC = () => {
 
   const activeEvents = days.find((d) => d.key === activeDay)?.events || [];
 
-  const emptyDayText = {
-    pt: 'Dia tranquilo — nada agendado.',
-    en: 'A calm day — nothing scheduled.',
-    he: 'יום רגוע — אין אירועים מתוכננים.'
-  }[language];
+  const emptyDayText = 'A calm day — nothing scheduled.';
 
   return (
     <div>

@@ -2,7 +2,7 @@
  * Vercel serverless entry for POST /api/finance/sync.
  * GOOGLE_SHEETS_CREDENTIALS / GOOGLE_SHEETS_SPREADSHEET_ID come from the
  * environment only; without them the client keeps using localStorage
- * ("Sincronização com Google Sheets pendente").
+ * ("Google Sheets sync pending").
  */
 import { getSheetsConfig, syncLedgerToSheet, LedgerRow } from "../_lib/sheets.js";
 import type { ApiRequest, ApiResponse } from "../_lib/apiTypes.js";

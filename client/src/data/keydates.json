@@ -1,70 +1,38 @@
 [
   {
     "id": "kd-lease-dubai",
-    "label": {
-      "pt": "Contrato de Aluguel (Residência Dubai)",
-      "en": "Lease Agreement (Dubai Residence)",
-      "he": "חוזה שכירות (מגורים דובאי)"
-    },
+    "label": "Lease Agreement (Dubai Residence)",
     "date": "2026-09-24",
     "category": "lease",
     "lead_time_days": 65,
-    "suggestion": {
-      "pt": "O contrato de aluguel termina em 62 dias. Podemos iniciar as negociações agora?",
-      "en": "The lease agreement ends in 62 days. Shall we start negotiations now?",
-      "he": "חוזה השכירות מסתיים בעוד 62 ימים. נוכל להתחיל במשא ומתן עכשיו?"
-    },
+    "suggestion": "The lease agreement ends in 62 days. Shall we start negotiations now?",
     "status": "pending"
   },
   {
     "id": "kd-passport-expiry",
-    "label": {
-      "pt": "Passaporte Principal (Layla)",
-      "en": "Primary Passport (Layla)",
-      "he": "דרכון ראשי (לילה)"
-    },
+    "label": "Primary Passport (Layla)",
     "date": "2027-02-24",
     "category": "document",
     "lead_time_days": 220,
-    "suggestion": {
-      "pt": "Seu passaporte vence em 7 meses. Deseja que eu prepare a renovação?",
-      "en": "Your passport expires in 7 months. Would you like me to prepare the renewal?",
-      "he": "הדרכון שלך פג תוקף בעוד 7 חודשים. להכין את החידוש?"
-    },
+    "suggestion": "Your passport expires in 7 months. Would you like me to prepare the renewal?",
     "status": "pending"
   },
   {
     "id": "kd-dewa-bill",
-    "label": {
-      "pt": "Ciclo Fatura DEWA",
-      "en": "DEWA Billing Cycle",
-      "he": "מחזור חיוב DEWA"
-    },
+    "label": "DEWA Billing Cycle",
     "date": "2026-07-28",
     "category": "bill",
     "lead_time_days": 5,
-    "suggestion": {
-      "pt": "A fatura mensal da DEWA vence em breve. Deseja que eu confirme o débito e verifique os leiturados?",
-      "en": "The monthly DEWA bill is due soon. Would you like me to verify readings and confirm auto-pay?",
-      "he": "חשבון DEWA החודשי מגיע לפירעון בקרוב. לאשר את קריאות המונה ולתאם תשלום?"
-    },
+    "suggestion": "The monthly DEWA bill is due soon. Would you like me to verify readings and confirm auto-pay?",
     "status": "pending"
   },
   {
     "id": "kd-friday-zuma",
-    "label": {
-      "pt": "Reserva Zuma Dubai (Sexta-feira)",
-      "en": "Zuma Dubai Reservation (Friday)",
-      "he": "הזמנת מסעדת זומא דובאי (יום שישי)"
-    },
+    "label": "Zuma Dubai Reservation (Friday)",
     "date": "2026-07-31",
     "category": "pattern",
     "lead_time_days": 7,
-    "suggestion": {
-      "pt": "Este restaurante fica lotado toda sexta. Quer que eu reserve a mesa da próxima semana?",
-      "en": "This restaurant gets fully booked every Friday. Would you like me to reserve a table for next week?",
-      "he": "מסעדה זו מלאה בכל יום שישי. לעשות הזמנה לשבוע הבא?"
-    },
+    "suggestion": "This restaurant gets fully booked every Friday. Would you like me to reserve a table for next week?",
     "status": "pending"
   }
 ]

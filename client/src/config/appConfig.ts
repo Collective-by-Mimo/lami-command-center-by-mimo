@@ -41,7 +41,7 @@ export const CONTACT_CATEGORIES: ContactCategory[] = [
   {
     id: 'emergency',
     emoji: '🚨',
-    label: { pt: 'Emergência', en: 'Emergency', he: 'חירום' },
+    label: 'Emergency',
     entries: [
       { id: 'police', name: 'Police', phones: [{ display: '999', tel: '999' }] },
       { id: 'ambulance', name: 'Ambulance', phones: [{ display: '998', tel: '998' }] },
@@ -51,7 +51,7 @@ export const CONTACT_CATEGORIES: ContactCategory[] = [
   {
     id: 'utilities',
     emoji: '⚡',
-    label: { pt: 'Utilidades', en: 'Utilities', he: 'שירותים ציבוריים' },
+    label: 'Utilities',
     entries: [
       {
         id: 'dewa',
@@ -69,19 +69,19 @@ export const CONTACT_CATEGORIES: ContactCategory[] = [
   {
     id: 'home-community',
     emoji: '🏠',
-    label: { pt: 'Casa & Condomínio', en: 'Home & Community', he: 'בית וקהילה' },
+    label: 'Home & Community',
     entries: [{ id: 'emaar', name: 'Emaar', phones: [{ display: '800 36227', tel: '80036227' }] }]
   },
   {
     id: 'health',
     emoji: '🩺',
-    label: { pt: 'Saúde', en: 'Health', he: 'בריאות' },
+    label: 'Health',
     entries: [{ id: 'dha', name: 'DHA', phones: [{ display: '800 342', tel: '800342' }] }]
   },
   {
     id: 'transport',
     emoji: '🚗',
-    label: { pt: 'Transporte', en: 'Transport', he: 'תחבורה' },
+    label: 'Transport',
     entries: [
       { id: 'rta', name: 'RTA', phones: [{ display: '800 9090', tel: '8009090' }] },
       { id: 'dubai-taxi', name: 'Dubai Taxi', phones: [{ display: '04 208 0808', tel: '+97142080808' }] }
@@ -90,7 +90,7 @@ export const CONTACT_CATEGORIES: ContactCategory[] = [
   {
     id: 'mimo',
     emoji: '🛎️',
-    label: { pt: 'Mimo / LaMi', en: 'Mimo / LaMi', he: 'מימו / LaMi' },
+    label: 'Mimo / LaMi',
     entries: [
       {
         id: 'mimo-direct',
@@ -121,7 +121,7 @@ export const CONNECTION_PROVIDERS: ConnectionProvider[] = [
     host: 'dewa.gov.ae',
     badgeBg: '#00693C',
     badgeFg: '#FFFFFF',
-    tagline: { pt: 'Água & Energia', en: 'Water & Power', he: 'מים וחשמל' }
+    tagline: 'Water & Power'
   },
   {
     id: 'tasleem',
@@ -130,7 +130,7 @@ export const CONNECTION_PROVIDERS: ConnectionProvider[] = [
     host: 'tabreed.ae',
     badgeBg: '#0072BC',
     badgeFg: '#FFFFFF',
-    tagline: { pt: 'Ar-condicionado central', en: 'District cooling', he: 'מיזוג מרכזי' }
+    tagline: 'District cooling'
   },
   {
     id: 'lootah',
@@ -139,7 +139,7 @@ export const CONNECTION_PROVIDERS: ConnectionProvider[] = [
     host: 'lootahgas.ae',
     badgeBg: '#E87722',
     badgeFg: '#FFFFFF',
-    tagline: { pt: 'Gás central', en: 'Central gas', he: 'גז מרכזי' }
+    tagline: 'Central gas'
   },
   {
     id: 'du',
@@ -148,7 +148,7 @@ export const CONNECTION_PROVIDERS: ConnectionProvider[] = [
     host: 'du.ae',
     badgeBg: '#753BBD',
     badgeFg: '#FFFFFF',
-    tagline: { pt: 'Internet & Telefonia', en: 'Internet & Mobile', he: 'אינטרנט וסלולר' }
+    tagline: 'Internet & Mobile'
   },
   {
     id: 'emaar',
@@ -157,7 +157,7 @@ export const CONNECTION_PROVIDERS: ConnectionProvider[] = [
     host: 'emaar.com',
     badgeBg: '#1A1A1A',
     badgeFg: '#D4AF37',
-    tagline: { pt: 'Condomínio & Comunidade', en: 'Community & Building', he: 'קהילה ובניין' }
+    tagline: 'Community & Building'
   },
   {
     id: 'eand',
@@ -166,14 +166,14 @@ export const CONNECTION_PROVIDERS: ConnectionProvider[] = [
     host: 'eand.com',
     badgeBg: '#E00800',
     badgeFg: '#FFFFFF',
-    tagline: { pt: 'Telecom & Serviços', en: 'Telecom & Services', he: 'תקשורת ושירותים' }
+    tagline: 'Telecom & Services'
   }
 ];
 
 // ——— Case category taxonomy (nested; English-only display) ———
 // I18nText is retained as the label shape for compatibility; only English is
 // filled and rendered. `L` keeps the definitions terse.
-const L = (s: string): I18nText => ({ pt: s, en: s, he: s });
+const L = (s: string): I18nText => s;
 
 export interface CaseSubcategory {
   id: string;
@@ -358,15 +358,15 @@ export function resolveCaseCategory(caseItem: CaseItem): string {
 
 // ——— Finance ledger categories ———
 export const FINANCE_CATEGORIES: CaseCategoryDef[] = [
-  { id: 'casa', emoji: '🏠', label: { pt: 'Casa', en: 'Home', he: 'בית' } },
-  { id: 'utilidades', emoji: '⚡', label: { pt: 'Utilidades', en: 'Utilities', he: 'שירותים ציבוריים' } },
-  { id: 'lavanderia', emoji: '🧺', label: { pt: 'Lavanderia', en: 'Laundry', he: 'מכבסה' } },
-  { id: 'limpeza', emoji: '🧹', label: { pt: 'Limpeza', en: 'Cleaning', he: 'ניקיון' } },
-  { id: 'compras', emoji: '🛍️', label: { pt: 'Compras', en: 'Shopping', he: 'קניות' } },
-  { id: 'transporte', emoji: '🚗', label: { pt: 'Transporte', en: 'Transport', he: 'תחבורה' } },
-  { id: 'saude', emoji: '🩺', label: { pt: 'Saúde', en: 'Health', he: 'בריאות' } },
-  { id: 'pessoal', emoji: '🌸', label: { pt: 'Pessoal', en: 'Personal', he: 'אישי' } },
-  { id: 'outros', emoji: '📎', label: { pt: 'Outros', en: 'Other', he: 'אחר' } }
+  { id: 'casa', emoji: '🏠', label: 'Home' },
+  { id: 'utilidades', emoji: '⚡', label: 'Utilities' },
+  { id: 'lavanderia', emoji: '🧺', label: 'Laundry' },
+  { id: 'limpeza', emoji: '🧹', label: 'Cleaning' },
+  { id: 'compras', emoji: '🛍️', label: 'Shopping' },
+  { id: 'transporte', emoji: '🚗', label: 'Transport' },
+  { id: 'saude', emoji: '🩺', label: 'Health' },
+  { id: 'pessoal', emoji: '🌸', label: 'Personal' },
+  { id: 'outros', emoji: '📎', label: 'Other' }
 ];
 
 export function getFinanceCategory(id?: string): CaseCategoryDef | undefined {
