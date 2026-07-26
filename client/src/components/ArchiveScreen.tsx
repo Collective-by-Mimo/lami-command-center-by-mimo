@@ -4,7 +4,6 @@
  */
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { getTranslation } from '../i18n/translations';
 import { CaseItem } from '../types';
 import { Search, Archive, ChevronRight, ShieldCheck } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -14,11 +13,11 @@ export const ArchiveScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter completed cases
-  const completedCases = cases.filter((c) => c.clientState === '✔️ Concluído');
+  const completedCases = cases.filter((c) => c.clientState === '✔️ Completed');
 
   const filtered = completedCases.filter((c) => {
     if (!searchQuery.trim()) return true;
-    const titleText = (c.title[language] || c.title.pt).toLowerCase();
+    const titleText = (c.title).toLowerCase();
     const query = searchQuery.toLowerCase();
     return titleText.includes(query) || c.emoji.includes(query);
   });
@@ -35,7 +34,7 @@ export const ArchiveScreen: React.FC = () => {
   const formatMonthLabel = (monthKey: string) => {
     const [year, month] = monthKey.split('-');
     const date = new Date(parseInt(year), parseInt(month) - 1, 1);
-    return date.toLocaleDateString(language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'pt-BR', {
+    return date.toLocaleDateString('en-US', {
       month: 'long',
       year: 'numeric'
     });
@@ -48,10 +47,10 @@ export const ArchiveScreen: React.FC = () => {
       <div>
         <h1 className="font-serif-display text-[28px] text-[#0E3F3A] tracking-[-0.3px] flex items-center gap-2">
           <Archive className="w-6 h-6 text-[#145A52]" />
-          <span>{getTranslation('archiveTitle', language)}</span>
+          <span>{"Completed Cases Archive"}</span>
         </h1>
         <p className="text-[13px] text-[#6B7280] mt-1">
-          {completedCases.length} {getTranslation('resolvedMatters', language)}
+          {completedCases.length} {"matters resolved with excellence"}
         </p>
       </div>
 
@@ -62,7 +61,7 @@ export const ArchiveScreen: React.FC = () => {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={getTranslation('searchPlaceholder', language)}
+          placeholder={"Search cases by name, topic or status..."}
           className={`w-full h-11 bg-white rounded-full border border-[#E7E1D5] text-[14px] text-[#1A1A1A] placeholder:text-[#9AA3A0] focus:outline-none focus:ring-2 focus:ring-[#145A52]/30 ${
             isRTL ? 'pr-11 pl-4' : 'pl-11 pr-4'
           }`}
@@ -89,7 +88,7 @@ export const ArchiveScreen: React.FC = () => {
                     {formatMonthLabel(monthKey)}
                   </span>
                   <span className="text-xs font-semibold text-[#B8912E] bg-white px-2.5 py-0.5 rounded-full border border-[#B8912E]/30">
-                    {monthCases.length} {getTranslation('resolvedMatters', language)}
+                    {monthCases.length} {"matters resolved with excellence"}
                   </span>
                 </div>
 
@@ -109,16 +108,16 @@ export const ArchiveScreen: React.FC = () => {
                         </div>
                         <div className="min-w-0">
                           <h4 className="font-serif-display text-[18px] font-semibold text-[#0E3F3A] leading-tight truncate">
-                            {c.title[language] || c.title.pt}
+                            {c.title}
                           </h4>
                           <p className="font-sans text-[13px] text-[#888888] truncate mt-0.5 flex items-center gap-1">
                             {c.completionProof ? (
                               <span className="flex items-center gap-1 text-[#145A52]">
                                 <ShieldCheck className="w-3.5 h-3.5 text-[#B8912E]" />
-                                {{ pt: 'Comprovante anexado', en: 'Proof attached', he: 'אסמכתה מצורפת' }[language]}
+                                {'Proof attached'}
                               </span>
                             ) : (
-                              { pt: 'Concluído e arquivado', en: 'Completed and archived', he: 'הושלם ותויק' }[language]
+                              'Completed and archived'
                             )}
                           </p>
                         </div>
@@ -126,7 +125,7 @@ export const ArchiveScreen: React.FC = () => {
 
                       <div className="flex items-center gap-2 shrink-0">
                         <span className="text-xs bg-gray-100 text-gray-600 font-medium px-2.5 py-1 rounded-full border border-gray-200">
-                          {{ pt: '✓ Concluído', en: '✓ Completed', he: '✓ הושלם' }[language]}
+                          {'✓ Completed'}
                         </span>
                         <ChevronRight className={`w-4 h-4 text-[#A8B4B1] group-hover:text-[#145A52] shrink-0 ${isRTL ? 'rotate-180' : ''}`} />
                       </div>
@@ -139,7 +138,7 @@ export const ArchiveScreen: React.FC = () => {
         ) : (
           <div className="bg-white rounded-2xl p-8 text-center py-12 border border-[#E7E1D5]">
             <p className="text-sm text-[#62726F] font-serif-display italic text-[16px]">
-              {{ pt: 'Nenhum caso concluído no arquivo com esta pesquisa.', en: 'No completed cases match this search.', he: 'לא נמצאו תיקים שהושלמו בחיפוש זה.' }[language]}
+              {'No completed cases match this search.'}
             </p>
           </div>
         )}

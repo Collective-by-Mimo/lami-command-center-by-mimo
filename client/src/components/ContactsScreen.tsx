@@ -13,13 +13,9 @@ export const ContactsScreen: React.FC = () => {
   const { language, setCurrentView, isRTL } = useApp();
 
   const t = {
-    title: { pt: 'Contatos', en: 'Contacts', he: 'אנשי קשר' }[language],
-    subtitle: {
-      pt: 'Toque em um número para ligar imediatamente',
-      en: 'Tap a number to call instantly',
-      he: 'הקישו על מספר לחיוג מיידי'
-    }[language],
-    back: { pt: 'Voltar ao Briefing', en: 'Back to Briefing', he: 'חזרה לתדריך' }[language]
+    title: 'Contacts',
+    subtitle: 'Tap a number to call instantly',
+    back: 'Back to Briefing'
   };
 
   return (
@@ -54,7 +50,7 @@ export const ContactsScreen: React.FC = () => {
           >
             <div className="flex items-center gap-3">
               <h2 className="text-[13px] font-semibold text-[#999999] tracking-[0.5px] shrink-0 font-serif-display">
-                {category.emoji} {category.label[language] || category.label.pt}
+                {category.emoji} {category.label}
               </h2>
               <span className="flex-1 h-px bg-[#E2DDD5]" />
             </div>

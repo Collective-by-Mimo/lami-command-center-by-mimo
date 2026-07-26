@@ -71,17 +71,17 @@ const APP_URL = 'lami.mimoscollective.com';
 
 /** 1. New case created */
 export function notifyNewCase(caseName: string) {
-  return sendWhatsAppNotification(`🛎️ LaMi: Novo caso criado — ${caseName}. Acompanhe: ${APP_URL}`);
+  return sendWhatsAppNotification(`🛎️ LaMi: New case created — ${caseName}. Follow along: ${APP_URL}`);
 }
 
 /** 2. Case awaiting approval */
 export function notifyAwaitingApproval(caseName: string) {
-  return sendWhatsAppNotification(`🔔 LaMi: ${caseName} aguarda sua aprovação. ${APP_URL}`);
+  return sendWhatsAppNotification(`🔔 LaMi: ${caseName} is awaiting your approval. ${APP_URL}`);
 }
 
 /** 3. Case completed */
 export function notifyCaseCompleted(caseName: string) {
-  return sendWhatsAppNotification(`✅ LaMi: ${caseName} concluído. Foto e comprovante disponíveis.`);
+  return sendWhatsAppNotification(`✅ LaMi: ${caseName} completed. Photo and receipt available.`);
 }
 
 /** 4. Proactive suggestion triggered */
@@ -91,11 +91,7 @@ export function notifySuggestion(suggestionText: string) {
 
 /** 5. Per-case wa.me deep link — opens a chat with Mimo about a specific case */
 export function getMimoCaseWhatsAppUrl(caseTitle: string, language: Language): string {
-  const text = {
-    pt: `Oi Mimo 🛎️ sobre: ${caseTitle}`,
-    en: `Hi Mimo 🛎️ about: ${caseTitle}`,
-    he: `היי מימו 🛎️ בנוגע ל: ${caseTitle}`
-  }[language];
+  const text = `Hi Mimo 🛎️ about: ${caseTitle}`;
   return `https://wa.me/${MIMO_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 }
 

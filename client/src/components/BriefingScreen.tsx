@@ -36,9 +36,9 @@ export const BriefingScreen: React.FC = () => {
   const [editingBriefing, setEditingBriefing] = useState(false);
   const [draft, setDraft] = useState('');
 
-  const attentionCases = cases.filter((c) => c.clientState === '🔔 Aguardando você');
+  const attentionCases = cases.filter((c) => c.clientState === '🔔 Awaiting you');
   const completedCases = cases
-    .filter((c) => c.clientState === '✔️ Concluído')
+    .filter((c) => c.clientState === '✔️ Completed')
     .sort((a, b) => (b.completionProof?.completedAt || '').localeCompare(a.completionProof?.completedAt || ''))
     .slice(0, 3);
 
@@ -56,33 +56,33 @@ export const BriefingScreen: React.FC = () => {
   const hour = new Date().getHours();
   const greeting =
     hour >= 6 && hour < 12
-      ? { pt: 'Bom dia, Layla 🌸', en: 'Good morning, Layla 🌸', he: 'בוקר טוב, ליילה 🌸' }
+      ? 'Good morning, Layla 🌸'
       : hour >= 12 && hour < 18
-        ? { pt: 'Boa tarde, Layla 🌸', en: 'Good afternoon, Layla 🌸', he: 'צהריים טובים, ליילה 🌸' }
-        : { pt: 'Boa noite, Layla 🌸', en: 'Good evening, Layla 🌸', he: 'ערב טוב, ליילה 🌸' };
+        ? 'Good afternoon, Layla 🌸'
+        : 'Good evening, Layla 🌸';
 
-  const locale = language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'pt-BR';
+  const locale = 'en-US';
   const today = new Date().toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
 
-  const briefingText = briefing.prose[language] || briefing.prose.pt;
+  const briefingText = briefing.prose;
   const showReadMore = briefingText.length > 180;
 
   const t = {
-    briefingLabel: { pt: 'Briefing de hoje', en: "Today's briefing", he: 'סיכום יומי' }[language],
-    readMore: { pt: 'Ler mais ↓', en: 'Read more ↓', he: 'קרא עוד ↓' }[language],
-    readLess: { pt: 'Ler menos ↑', en: 'Read less ↑', he: 'קרא פחות ↑' }[language],
-    attention: { pt: 'Requer sua atenção', en: 'Requires your attention', he: 'דורש את תשומת לבך' }[language],
-    week: { pt: 'Esta semana', en: 'This week', he: 'השבוע' }[language],
-    empty: { pt: 'Tudo em nossas mãos', en: 'Everything in our hands', he: 'הכל בטיפולנו' }[language],
-    completed: { pt: 'Recentemente concluído', en: 'Recently completed', he: 'הושלם לאחרונה' }[language],
-    seeAll: { pt: 'Ver todos →', en: 'See all →', he: '→ הצג הכל' }[language],
-    awaitingChip: { pt: '🔔 Aguardando você', en: '🔔 Awaiting you', he: '🔔 ממתין לך' }[language],
-    quickAccess: { pt: 'Acesso rápido', en: 'Quick access', he: 'גישה מהירה' }[language],
-    takeMeHome: { pt: 'Levar-me para casa', en: 'Take me home', he: 'קחו אותי הביתה' }[language],
-    contactsTile: { pt: 'Contatos', en: 'Contacts', he: 'אנשי קשר' }[language],
-    contactsTileSub: { pt: 'Ligações em um toque', en: 'One-tap calls', he: 'חיוג בלחיצה אחת' }[language],
-    connectionsTile: { pt: 'Conexões', en: 'Connections', he: 'חיבורים' }[language],
-    connectionsTileSub: { pt: 'Portais dos provedores', en: 'Provider portals', he: 'פורטלים של ספקים' }[language]
+    briefingLabel: "Today's briefing",
+    readMore: 'Read more ↓',
+    readLess: 'Read less ↑',
+    attention: 'Requires your attention',
+    week: 'This week',
+    empty: 'Everything in our hands',
+    completed: 'Recently completed',
+    seeAll: 'See all →',
+    awaitingChip: '🔔 Awaiting you',
+    quickAccess: 'Quick access',
+    takeMeHome: 'Take me home',
+    contactsTile: 'Contacts',
+    contactsTileSub: 'One-tap calls',
+    connectionsTile: 'Connections',
+    connectionsTileSub: 'Provider portals'
   };
 
   return (
@@ -95,7 +95,7 @@ export const BriefingScreen: React.FC = () => {
         className="flex items-end justify-between gap-3 pt-4"
       >
         <h1 className="font-serif-display italic text-[32px] leading-[1.15] text-[#0E3F3A]">
-          {greeting[language]}
+          {greeting}
         </h1>
         <span className="text-[13px] text-[#999999] mb-1.5 capitalize shrink-0">{today}</span>
       </motion.div>
@@ -126,7 +126,7 @@ export const BriefingScreen: React.FC = () => {
             <div className="flex gap-2">
               <button
                 onClick={() => {
-                  updateBriefingText({ ...briefing.prose, [language]: draft });
+                  updateBriefingText(draft);
                   setEditingBriefing(false);
                 }}
                 className="px-4 py-1.5 bg-[#145A52] text-white text-[13px] font-semibold rounded-full"
@@ -195,9 +195,9 @@ export const BriefingScreen: React.FC = () => {
                       </span>
                       <div className="min-w-0">
                         <p className="font-serif-display text-[17px] text-[#0E3F3A] leading-tight truncate">
-                          {c.title[language] || c.title.pt}
+                          {c.title}
                         </p>
-                        <p className="text-[13px] text-[#6B7280] truncate">{c.nextStep[language] || c.nextStep.pt}</p>
+                        <p className="text-[13px] text-[#6B7280] truncate">{c.nextStep}</p>
                       </div>
                     </div>
                     <span className="lami-pulse text-[11px] font-medium px-2.5 py-1 rounded-full bg-[#FFF8E7] text-[#B8912E] border border-[#B8912E] whitespace-nowrap shrink-0">
@@ -234,10 +234,10 @@ export const BriefingScreen: React.FC = () => {
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
               <p className="font-serif-display text-[18px] font-semibold leading-tight">
-                {{ pt: 'Serviços', en: 'Services', he: 'שירותים' }[language]}
+                {'Services'}
               </p>
               <p className="text-[12px] text-[#CFE3DE] mt-0.5">
-                {{ pt: 'Tudo o que cuidamos — o catálogo completo', en: 'Everything we handle — the full catalogue', he: 'כל מה שאנחנו מטפלים — הקטלוג המלא' }[language]}
+                {'Everything we handle — the full catalogue'}
               </p>
             </div>
             <ChevronRight className={`w-4 h-4 text-[#B8912E] shrink-0 ${isRTL ? 'rotate-180' : ''}`} />
@@ -343,7 +343,7 @@ export const BriefingScreen: React.FC = () => {
                 className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full text-[13px] text-[#6B7280] border border-[#E7E1D5]"
               >
                 <span>✔️</span>
-                <span className="max-w-[180px] truncate">{c.title[language] || c.title.pt}</span>
+                <span className="max-w-[180px] truncate">{c.title}</span>
               </button>
             ))}
           </div>

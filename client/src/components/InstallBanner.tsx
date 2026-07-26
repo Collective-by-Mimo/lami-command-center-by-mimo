@@ -28,11 +28,7 @@ export const InstallBanner: React.FC = () => {
     localStorage.setItem(DISMISS_KEY, 'true');
   };
 
-  const label = {
-    pt: 'Adicione ao ecrã inicial para acesso instantâneo ↓',
-    en: 'Add to your home screen for instant access ↓',
-    he: 'הוסיפי למסך הבית לגישה מיידית ↓'
-  }[language];
+  const label = 'Add to your home screen for instant access ↓';
 
   return (
     <AnimatePresence>

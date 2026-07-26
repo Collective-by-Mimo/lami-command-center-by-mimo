@@ -38,65 +38,41 @@ export const FinanceScreen: React.FC = () => {
     showToast
   } = useApp();
 
-  const locale = language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'pt-BR';
+  const locale = 'en-US';
 
   const t = {
-    title: { pt: 'Finanças', en: 'Finance', he: 'כספים' }[language],
-    subtitle: {
-      pt: 'Registro de despesas, entradas e reembolsos em AED',
-      en: 'Ledger of expenses, income and reimbursements in AED',
-      he: 'רישום הוצאות, הכנסות והחזרים ב-AED'
-    }[language],
-    devBanner: {
-      pt: '⚠️ Autenticação real pendente — não publicar com dados financeiros reais até Fase 2.',
-      en: '⚠️ Real authentication pending — do not publish with real financial data until Phase 2.',
-      he: '⚠️ אימות אמיתי ממתין — אין לפרסם נתונים פיננסיים אמיתיים עד שלב 2.'
-    }[language],
-    income: { pt: 'Entradas', en: 'Income', he: 'הכנסות' }[language],
-    expenses: { pt: 'Saídas', en: 'Expenses', he: 'הוצאות' }[language],
-    reimbursements: { pt: 'Reembolsos', en: 'Reimbursements', he: 'החזרים' }[language],
-    balance: { pt: 'Saldo do mês', en: 'Month balance', he: 'יתרת החודש' }[language],
-    allTimeBalance: { pt: 'Saldo acumulado', en: 'All-time balance', he: 'יתרה כוללת' }[language],
-    runningBalance: { pt: 'Saldo corrente', en: 'Running balance', he: 'יתרה שוטפת' }[language],
-    paidByLabel: { pt: 'Pago por', en: 'Paid by', he: 'שולם על ידי' }[language],
-    paidByOtherPh: { pt: 'Especificar...', en: 'Specify...', he: 'פרט...' }[language],
-    paymentMethodLabel: { pt: 'Forma de pagamento', en: 'Payment method', he: 'אמצעי תשלום' }[language],
-    exportReport: { pt: 'Exportar relatório', en: 'Export report', he: 'ייצוא דוח' }[language],
-    sync: { pt: 'Sincronizar com Google Sheets', en: 'Sync to Google Sheets', he: 'סנכרון ל-Google Sheets' }[language],
-    syncPending: {
-      pt: 'Sincronização com Google Sheets pendente',
-      en: 'Google Sheets sync pending',
-      he: 'סנכרון Google Sheets ממתין'
-    }[language],
-    syncPendingNote: {
-      pt: 'Dados mantidos localmente neste dispositivo.',
-      en: 'Data kept locally on this device.',
-      he: 'הנתונים נשמרים מקומית במכשיר זה.'
-    }[language],
-    syncDone: {
-      pt: 'Planilha do Google Sheets atualizada!',
-      en: 'Google Sheet updated!',
-      he: 'הגיליון של Google Sheets עודכן!'
-    }[language],
-    noTransactions: {
-      pt: 'Nenhum lançamento neste mês 🌿',
-      en: 'No transactions this month 🌿',
-      he: 'אין תנועות החודש 🌿'
-    }[language],
-    newTransaction: { pt: 'Novo lançamento', en: 'New transaction', he: 'תנועה חדשה' }[language],
-    descriptionPh: { pt: 'Descrição', en: 'Description', he: 'תיאור' }[language],
-    amountPh: { pt: 'Valor (AED)', en: 'Amount (AED)', he: 'סכום (AED)' }[language],
-    attachReceipt: { pt: 'Anexar recibo (foto)', en: 'Attach receipt (photo)', he: 'צירוף קבלה (תמונה)' }[language],
-    save: { pt: 'Salvar lançamento', en: 'Save transaction', he: 'שמירת תנועה' }[language],
+    title: 'Finance',
+    subtitle: 'Ledger of expenses, income and reimbursements in AED',
+    devBanner: '⚠️ Real authentication pending — do not publish with real financial data until Phase 2.',
+    income: 'Income',
+    expenses: 'Expenses',
+    reimbursements: 'Reimbursements',
+    balance: 'Month balance',
+    allTimeBalance: 'All-time balance',
+    runningBalance: 'Running balance',
+    paidByLabel: 'Paid by',
+    paidByOtherPh: 'Specify...',
+    paymentMethodLabel: 'Payment method',
+    exportReport: 'Export report',
+    sync: 'Sync to Google Sheets',
+    syncPending: 'Google Sheets sync pending',
+    syncPendingNote: 'Data kept locally on this device.',
+    syncDone: 'Google Sheet updated!',
+    noTransactions: 'No transactions this month 🌿',
+    newTransaction: 'New transaction',
+    descriptionPh: 'Description',
+    amountPh: 'Amount (AED)',
+    attachReceipt: 'Attach receipt (photo)',
+    save: 'Save transaction',
     typeLabels: {
-      income: { pt: 'Entrada', en: 'Income', he: 'הכנסה' }[language],
-      expense: { pt: 'Despesa', en: 'Expense', he: 'הוצאה' }[language],
-      reimbursement: { pt: 'Reembolso', en: 'Reimbursement', he: 'החזר' }[language]
+      income: 'Income',
+      expense: 'Expense',
+      reimbursement: 'Reimbursement'
     },
     statusLabels: {
-      pending: { pt: 'Pendente', en: 'Pending', he: 'ממתין' }[language],
-      confirmed: { pt: 'Confirmado', en: 'Confirmed', he: 'מאושר' }[language],
-      reimbursed: { pt: 'Reembolsado', en: 'Reimbursed', he: 'הוחזר' }[language]
+      pending: 'Pending',
+      confirmed: 'Confirmed',
+      reimbursed: 'Reimbursed'
     }
   };
 
@@ -202,7 +178,7 @@ export const FinanceScreen: React.FC = () => {
     const rows = monthTransactions.map((tx) => [
       tx.date,
       `"${tx.description.replace(/"/g, '""')}"`,
-      getFinanceCategory(tx.category)?.label.en || tx.category,
+      getFinanceCategory(tx.category)?.label || tx.category,
       tx.type,
       tx.status,
       tx.paidBy === 'Other' ? tx.paidByOther || 'Other' : tx.paidBy || '',
@@ -245,9 +221,7 @@ export const FinanceScreen: React.FC = () => {
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) {
       showToast(
-        language === 'pt' ? 'Foto muito grande (máx. 2MB).' :
-        language === 'en' ? 'Photo too large (max 2MB).' :
-        'התמונה גדולה מדי (מקס׳ 2MB).'
+        'Photo too large (max 2MB).'
       );
       return;
     }
@@ -431,7 +405,7 @@ export const FinanceScreen: React.FC = () => {
                         <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                           <span className="font-mono text-[10px] text-[#6B7280]">{tx.date}</span>
                           <span className="text-[10px] bg-[#EEF7F5] text-[#145A52] px-1.5 py-0.5 rounded-full">
-                            {cat ? `${cat.emoji} ${cat.label[language] || cat.label.pt}` : tx.category}
+                            {cat ? `${cat.emoji} ${cat.label}` : tx.category}
                           </span>
                           <span
                             className={`text-[10px] px-1.5 py-0.5 rounded-full border ${
@@ -568,7 +542,7 @@ export const FinanceScreen: React.FC = () => {
                 >
                   {FINANCE_CATEGORIES.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.emoji} {c.label[language] || c.label.pt}
+                      {c.emoji} {c.label}
                     </option>
                   ))}
                 </select>

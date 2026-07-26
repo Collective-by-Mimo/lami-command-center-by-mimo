@@ -17,7 +17,7 @@ async function startServer() {
   // AUTH: Supabase multi-user — Phase 2 integration point.
 
   // Concierge AI — GEMINI_API_KEY stays server-side; failures degrade to a
-  // localized WhatsApp hand-off with HTTP 200, never a raw error.
+  // graceful WhatsApp hand-off with HTTP 200, never a raw error.
   app.post("/api/concierge", async (req, res) => {
     res.json(await conciergeReply(req.body));
   });
@@ -27,7 +27,7 @@ async function startServer() {
   });
 
   // Google Sheets sync — credentials from env only; without them the client
-  // keeps localStorage ("Sincronização com Google Sheets pendente").
+  // keeps localStorage ("Google Sheets sync pending").
   app.post("/api/finance/sync", async (req, res) => {
     const config = getSheetsConfig();
     if (!config) {

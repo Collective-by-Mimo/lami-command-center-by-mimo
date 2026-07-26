@@ -181,18 +181,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setIsOnline(true);
       refreshData();
       showToast(
-        language === 'pt' ? 'Conexão restabelecida — Dados sincronizados!' :
-        language === 'en' ? 'Connection restored — State synchronized!' :
-        'חיבור שוחזר — הנתונים מסונכרנים!'
+        'Connection restored — State synchronized!'
       );
     };
 
     const handleOffline = () => {
       setIsOnline(false);
       showToast(
-        language === 'pt' ? 'Modo Offline — Dados salvos localmente.' :
-        language === 'en' ? 'Offline Mode — Local state preserved.' :
-        'מצב לא מקוון — נתונים שמורים מקומית.'
+        'Offline Mode — Local state preserved.'
       );
     };
 
@@ -232,7 +228,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     deferredPrompt.prompt();
     const choiceResult = await deferredPrompt.userChoice;
     if (choiceResult.outcome === 'accepted') {
-      showToast(language === 'pt' ? 'Aplicativo instalado!' : language === 'en' ? 'App installed!' : 'האפליקציה הותקנה!');
+      showToast('App installed!');
     }
     setDeferredPrompt(null);
     setCanInstallPWA(false);
@@ -264,9 +260,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     DataAdapter.addTransaction(tx);
     refreshData();
     showToast(
-      language === 'pt' ? 'Lançamento registrado!' :
-      language === 'en' ? 'Transaction recorded!' :
-      'התנועה נרשמה!'
+      'Transaction recorded!'
     );
   };
 
@@ -279,9 +273,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     DataAdapter.deleteTransaction(id);
     refreshData();
     showToast(
-      language === 'pt' ? 'Lançamento removido.' :
-      language === 'en' ? 'Transaction removed.' :
-      'התנועה הוסרה.'
+      'Transaction removed.'
     );
   };
 
@@ -296,9 +288,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       hapticSuccess();
       refreshData();
       showToast(
-        language === 'pt' ? 'Providência aceita! Novo caso criado em "Em nossas mãos".' :
-        language === 'en' ? 'Action accepted! New case created in "In our hands".' :
-        'הפעולה אושרה! תיק חדש נוצר ב"בידיים שלנו".'
+        'Action accepted! New case created in "In our hands".'
       );
     }
   };
@@ -308,9 +298,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     hapticTap();
     refreshData();
     showToast(
-      language === 'pt' ? 'Sugestão dispensada por enquanto.' :
-      language === 'en' ? 'Suggestion dismissed for now.' :
-      'ההצעה נדחתה לעת עתה.'
+      'Suggestion dismissed for now.'
     );
   };
 
@@ -336,9 +324,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (updated) {
       refreshData();
       showToast(
-        language === 'pt' ? 'Decisão registrada com sucesso!' :
-        language === 'en' ? 'Decision recorded successfully!' :
-        'ההחלטה שנרשמה בהצלחה!'
+        'Decision recorded successfully!'
       );
     }
   };
@@ -349,9 +335,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (updated) {
       refreshData();
       showToast(
-        language === 'pt' ? 'Caso concluído e movido para o Arquivo!' :
-        language === 'en' ? 'Case completed & moved to Archive!' :
-        'התיק הושלם והועבר לארכיון!'
+        'Case completed & moved to Archive!'
       );
     }
   };

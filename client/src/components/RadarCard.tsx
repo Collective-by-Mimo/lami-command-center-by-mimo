@@ -21,20 +21,12 @@ export const RadarCard: React.FC<RadarCardProps> = ({ keyDate }) => {
     dismissKeyDateSuggestion(keyDate.id);
   };
 
-  const acceptLabels = {
-    pt: 'Sim, por favor',
-    en: 'Yes, please',
-    he: 'כן, בבקשה'
-  };
+  const acceptLabels = 'Yes, please';
 
-  const dismissLabels = {
-    pt: 'Agora não',
-    en: 'Not now',
-    he: 'לא עכשיו'
-  };
+  const dismissLabels = 'Not now';
 
-  const titleText = keyDate.label[language] || keyDate.label.pt;
-  const subtitleText = keyDate.suggestion[language] || keyDate.suggestion.pt;
+  const titleText = keyDate.label;
+  const subtitleText = keyDate.suggestion;
 
   return (
     <div
@@ -59,7 +51,7 @@ export const RadarCard: React.FC<RadarCardProps> = ({ keyDate }) => {
 
         <span className="text-[11px] font-mono text-[#8F6C19] font-medium shrink-0 bg-white/60 px-2 py-0.5 rounded-full border border-[#B8912E]/20">
           {new Date(keyDate.date).toLocaleDateString(
-            language === 'he' ? 'he-IL' : language === 'en' ? 'en-US' : 'pt-BR',
+            'en-US',
             { month: 'short', day: 'numeric' }
           )}
         </span>
@@ -72,7 +64,7 @@ export const RadarCard: React.FC<RadarCardProps> = ({ keyDate }) => {
           className="flex-1 bg-[#145A52] hover:bg-[#0E3F3A] text-white font-medium text-xs py-2 px-4 rounded-xl shadow-xs transition active:scale-[0.98] flex items-center justify-center gap-1.5"
         >
           <Check className="w-4 h-4 text-[#B8912E]" />
-          <span>{acceptLabels[language]}</span>
+          <span>{acceptLabels}</span>
         </button>
 
         <button
@@ -80,7 +72,7 @@ export const RadarCard: React.FC<RadarCardProps> = ({ keyDate }) => {
           className="px-3.5 py-2 bg-black/5 hover:bg-black/10 text-[#62726F] font-medium text-xs rounded-xl transition active:scale-[0.98] flex items-center justify-center gap-1"
         >
           <X className="w-3.5 h-3.5" />
-          <span>{dismissLabels[language]}</span>
+          <span>{dismissLabels}</span>
         </button>
       </div>
     </div>

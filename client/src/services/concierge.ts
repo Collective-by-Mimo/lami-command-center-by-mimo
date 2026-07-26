@@ -7,11 +7,7 @@
 import { BriefingData, CaseItem, KeyDateItem, Language, UtilityItem } from '../types';
 import { getCaseCategory } from '../config/appConfig';
 
-export const CONCIERGE_CLIENT_FALLBACK: Record<Language, string> = {
-  pt: 'Não consegui responder agora — pode falar direto com o Mimo no WhatsApp 💬',
-  en: "I couldn't answer right now — please message Mimo directly on WhatsApp 💬",
-  he: 'לא הצלחתי לענות כרגע — אפשר לפנות ישירות למימו ב-WhatsApp 💬'
-};
+export const CONCIERGE_CLIENT_FALLBACK = "I couldn't answer right now — please message Mimo directly on WhatsApp 💬";
 
 export interface ConciergeGroundingData {
   briefing: string;
@@ -35,36 +31,33 @@ export function buildGroundingData(
   briefing: BriefingData,
   language: Language
 ): ConciergeGroundingData {
-  const pick = (text?: { pt: string; en: string; he: string }) =>
-    text ? text[language] || text.pt : undefined;
-
   return {
-    briefing: pick(briefing.prose) || '',
+    briefing: briefing.prose || '',
     cases: cases.map((c) => ({
-      title: pick(c.title) || '',
+      title: c.title || '',
       clientState: c.clientState,
-      nextStep: pick(c.nextStep),
+      nextStep: c.nextStep,
       dueDate: c.dueDate,
-      category: getCaseCategory(c.category) ? pick(getCaseCategory(c.category)!.label) : c.category,
+      category: getCaseCategory(c.category) ? getCaseCategory(c.category)!.label : c.category,
       completedAt: c.completionProof?.completedAt,
       quotations: c.quotations?.map((q) => ({
-        title: pick(q.title) || '',
+        title: q.title || '',
         priceAED: q.priceAED,
         recommended: q.isRecommended,
-        timeline: pick(q.timeline)
+        timeline: q.timeline
       }))
       // Excluded on purpose: id, internalStatus, priority, timeline/operator
       // notes, decision internals, utilityType account linkage
     })),
     bills: utilities.map((u) => ({
       name: u.name,
-      status: pick(u.statusText) || '',
-      notes: pick(u.notes) || ''
+      status: u.statusText || '',
+      notes: u.notes || ''
       // Excluded on purpose: contractAccount, customerNumber, phone, id
     })),
     keyDates: keyDates
       .filter((k) => k.status !== 'dismissed')
-      .map((k) => ({ label: pick(k.label) || '', date: k.date, category: k.category }))
+      .map((k) => ({ label: k.label || '', date: k.date, category: k.category }))
   };
 }
 
@@ -92,6 +85,6 @@ export async function askConcierge(
     }
     throw new Error('empty reply');
   } catch {
-    return { reply: CONCIERGE_CLIENT_FALLBACK[language], fallback: true };
+    return { reply: CONCIERGE_CLIENT_FALLBACK, fallback: true };
   }
 }

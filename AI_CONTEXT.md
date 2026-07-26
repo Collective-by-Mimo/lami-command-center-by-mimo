@@ -18,10 +18,13 @@ A **private, login-only PWA** ("LaMi Command Center") that lets the operator (Mi
 - Per-case WhatsApp button; "Take me home"; PWA installable; service worker cache v3.
 - **Phase 1 (DONE):** the app is private/login-only, so **any logged-in user now has full control by default** — Add task, Add finance, Edit, Delete, and photo-upload buttons are always visible (no `?operator=1` needed). `?op=0` gives a read-only "client preview". Change was in `client/src/context/AppContext.tsx` (isOperator defaults on). **Do not redo Phase 1.**
 
+## Status note (English-only cleanup — DONE)
+- The abandoned multi-language layer has been fully removed: no `pt`/`he` strings, no `i18n/translations.ts`, no language switcher. `I18nText` is now a `string` alias; `Language = 'en'`; the `ClientState`/`InternalStatus`/`Priority` enum values are English; `<html lang="en">`. Verified clean in source and in the production bundle.
+
 ## Still missing (planned)
-- **Categories are too narrow** and only show when a task already exists in them → Phase 2 (this task).
-- **Finance has no cash-flow** (no "Paid By" / payment-method, no running balance, no invoice) → Phase 3.
-- **Notion is not the source of truth** (app uses localStorage) → Phase 4.
+- **Categories are too narrow** and only show when a task already exists in them → Phase 2 (DONE).
+- **Finance has no cash-flow** (no "Paid By" / payment-method, no running balance, no invoice) → Phase 3 (DONE).
+- **Notion is not the source of truth** (app uses localStorage) → Phase 4 (schema created in Notion; app-side bridge code still to be built).
 - **No invoice email / WhatsApp / Sheets automation on submit** → Phase 5.
 - **No AI task-creation agent** (natural-language "create task X"); the Concierge exists but isn't a task creator → Phase 6.
 
@@ -36,5 +39,5 @@ A **private, login-only PWA** ("LaMi Command Center") that lets the operator (Mi
 
 ## Guardrails
 - Make only the next safe change; don't restart from zero; don't redesign.
-- Keep English-only + LTR. Preserve the trilingual `I18nText` data shape already in the code (only the English value renders).
+- Keep English-only + LTR. The trilingual data shape has been removed — `I18nText` is now a plain `string`; do not reintroduce `pt`/`he`.
 - After each phase: `pnpm run check` + `pnpm run build` clean, push to `main`, confirm the Vercel production deploy is READY, then report exactly what changed and stop.

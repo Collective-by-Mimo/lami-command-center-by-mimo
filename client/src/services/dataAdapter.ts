@@ -32,8 +32,8 @@ const INITIAL_HANDOFFS: HandoffItem[] = [
   {
     id: 'handoff-seed-1',
     createdAt: new Date(Date.now() - 35 * 60000).toISOString(),
-    clientQuestion: 'Qual o valor exato da taxa de renovação do visto da babá e quando vence o pagamento?',
-    language: 'pt',
+    clientQuestion: 'What is the exact nanny visa renewal fee, and when is the payment due?',
+    language: 'en',
     resolved: false
   },
   {
@@ -46,8 +46,8 @@ const INITIAL_HANDOFFS: HandoffItem[] = [
   {
     id: 'handoff-seed-3',
     createdAt: new Date(Date.now() - 240 * 60000).toISOString(),
-    clientQuestion: 'Preciso solicitar autorização para a mudança da mobília da varanda neste sábado.',
-    language: 'pt',
+    clientQuestion: 'I need to request approval to rearrange the balcony furniture this Saturday.',
+    language: 'en',
     resolved: false
   }
 ];
@@ -77,7 +77,7 @@ export class DataAdapter {
   }
 
   // Add a new handoff logged from Concierge AI
-  public static addHandoff(question: string, language: Language = 'pt'): HandoffItem {
+  public static addHandoff(question: string, language: Language = 'en'): HandoffItem {
     const item: HandoffItem = {
       id: `handoff-${Date.now()}`,
       createdAt: new Date().toISOString(),
@@ -122,26 +122,18 @@ export class DataAdapter {
     const created = this.createCase({
       emoji: categoryEmojis[kd.category] || '🎯',
       title: kd.label,
-      clientState: '✅ Em nossas mãos',
-      internalStatus: 'Aberto',
-      priority: 'Alta',
+      clientState: '✅ In our hands',
+      internalStatus: 'Open',
+      priority: 'High',
       isRecurring: kd.category === 'bill' || kd.category === 'pattern',
-      nextStep: {
-        pt: `Sugestão antecipada aceita pela cliente. Providências iniciadas pelo Mimo.`,
-        en: `Proactive suggestion accepted by client. Actions initiated by Mimo.`,
-        he: `הצעה מראש אושרה על ידי הלקוחה. פעולות הותחלו על ידי מימו.`
-      },
+      nextStep: `Proactive suggestion accepted by client. Actions initiated by Mimo.`,
       timeline: [
         {
           id: `tl-rad-${Date.now()}`,
           date: new Date().toISOString().split('T')[0],
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           addedBy: 'client',
-          content: {
-            pt: `Sugestão antecipada ("Radar"): "${kd.suggestion.pt}" aprovada com um toque pela cliente.`,
-            en: `Proactive suggestion ("Radar"): "${kd.suggestion.en}" approved with one tap by client.`,
-            he: `הצעה מראש ("מכ"ם"): "${kd.suggestion.he}" אושרה בלחיצה אחת על ידי הלקוחה.`
-          }
+          content: `Proactive suggestion ("Radar"): "${kd.suggestion}" approved with one tap by client.`
         }
       ]
     });
@@ -182,22 +174,18 @@ export class DataAdapter {
       id: `case-${Date.now()}`,
       emoji: newCase.emoji || '💼',
       title: newCase.title,
-      clientState: newCase.clientState || '✅ Em nossas mãos',
-      internalStatus: newCase.internalStatus || 'Aberto',
+      clientState: newCase.clientState || '✅ In our hands',
+      internalStatus: newCase.internalStatus || 'Open',
       priority: newCase.priority || 'Normal',
       isRecurring: newCase.isRecurring || false,
-      nextStep: newCase.nextStep || { pt: 'Análise inicial', en: 'Initial analysis', he: 'ניתוח ראשוני' },
+      nextStep: newCase.nextStep || 'Initial analysis',
       timeline: newCase.timeline || [
         {
           id: `tl-${Date.now()}`,
           date: now,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           addedBy: 'operator',
-          content: {
-            pt: 'Caso criado pelo Mimo.',
-            en: 'Case created by Mimo.',
-            he: 'תיק נוצר על ידי מימו.'
-          }
+          content: 'Case created by Mimo.'
         }
       ],
       quotations: newCase.quotations || [],
@@ -251,14 +239,10 @@ export class DataAdapter {
     caseItem.decision.resolvedAt = nowStr;
     caseItem.decision.resolvedComment = comment;
 
-    // Transition state from "🔔 Aguardando você" to "✅ Em nossas mãos"
-    caseItem.clientState = '✅ Em nossas mãos';
-    caseItem.internalStatus = 'Aberto';
-    caseItem.nextStep = {
-      pt: `Decisão aprovada (${chosenOption?.label.pt || optionId}). Em execução pelo Mimo.`,
-      en: `Decision approved (${chosenOption?.label.en || optionId}). In execution by Mimo.`,
-      he: `החלטה אושרה (${chosenOption?.label.he || optionId}). בטיפול על ידי מימו.`
-    };
+    // Transition state from "🔔 Awaiting you" to "✅ In our hands"
+    caseItem.clientState = '✅ In our hands';
+    caseItem.internalStatus = 'Open';
+    caseItem.nextStep = `Decision approved (${chosenOption?.label || optionId}). In execution by Mimo.`;
 
     // Log decision in timeline
     caseItem.timeline.unshift({
@@ -266,11 +250,7 @@ export class DataAdapter {
       date: nowStr,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       addedBy: 'client',
-      content: {
-        pt: `Decisão tomada pela cliente Layla: "${chosenOption?.label.pt || optionId}".`,
-        en: `Decision made by Layla: "${chosenOption?.label.en || optionId}".`,
-        he: `החלטה התקבלה על ידי לילה: "${chosenOption?.label.he || optionId}".`
-      }
+      content: `Decision made by Layla: "${chosenOption?.label || optionId}".`
     });
 
     return this.updateCase(caseItem);
@@ -289,14 +269,10 @@ export class DataAdapter {
     const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     const dateStr = now.toISOString().split('T')[0];
 
-    caseItem.clientState = '✔️ Concluído';
-    caseItem.internalStatus = 'Concluído';
+    caseItem.clientState = '✔️ Completed';
+    caseItem.internalStatus = 'Completed';
     caseItem.completedMonth = monthStr;
-    caseItem.nextStep = {
-      pt: 'Assunto resolvido e arquivado com sucesso.',
-      en: 'Matter resolved and archived successfully.',
-      he: 'העניין טופל ואורכב בהצלחה.'
-    };
+    caseItem.nextStep = 'Matter resolved and archived successfully.';
 
     caseItem.completionProof = {
       note: proofNote,
@@ -309,11 +285,7 @@ export class DataAdapter {
       date: dateStr,
       time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       addedBy: 'operator',
-      content: {
-        pt: `Caso marcado como concluído pelo Mimo. Comprovante anexado.`,
-        en: `Case marked as completed by Mimo. Proof attached.`,
-        he: `התיק סומן כושלם על ידי מימו. אישור צורף.`
-      },
+      content: `Case marked as completed by Mimo. Proof attached.`,
       photos: photoUrl ? [photoUrl] : []
     });
 
