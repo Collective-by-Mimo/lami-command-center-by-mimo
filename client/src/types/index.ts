@@ -131,6 +131,11 @@ export type TransactionType = 'income' | 'expense' | 'reimbursement';
 
 export type TransactionStatus = 'pending' | 'confirmed' | 'reimbursed';
 
+// Phase 3 — cash-flow attribution
+export type PaidBy = 'Layla' | 'Lior' | 'Mimo' | 'Other';
+
+export type PaymentMethod = 'Cash' | 'Card' | 'Bank Transfer' | 'PayPal' | 'Voucher' | 'Exchange' | 'Crypto';
+
 export interface FinanceTransaction {
   id: string;
   date: string; // "YYYY-MM-DD"
@@ -140,4 +145,7 @@ export interface FinanceTransaction {
   type: TransactionType;
   status: TransactionStatus;
   receiptBase64?: string; // TODO cloud storage — base64 in localStorage for Phase 1 only
+  paidBy?: PaidBy; // Phase 3
+  paidByOther?: string; // Phase 3 — free-text value when paidBy === 'Other'
+  paymentMethods?: PaymentMethod[]; // Phase 3 — multi-select tags, e.g. ['Cash', 'Card'] for a split payment
 }

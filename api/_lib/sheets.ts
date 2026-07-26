@@ -69,23 +69,40 @@ export interface LedgerRow {
   type?: string;
   status?: string;
   amountAED?: number;
+  paidBy?: string;
+  paidByOther?: string;
+  paymentMethod?: string; // flattened, e.g. "Cash+Card"
+  runningBalance?: number;
 }
 
 export async function syncLedgerToSheet(config: SheetsConfig, transactions: LedgerRow[]): Promise<number> {
   const token = await getGoogleAccessToken(config.creds);
   const values = [
-    ["Date", "Description", "Category", "Type", "Status", "Amount AED"],
+    [
+      "Date",
+      "Description",
+      "Category",
+      "Type",
+      "Status",
+      "Paid By",
+      "Payment Method",
+      "Amount AED",
+      "Running Balance",
+    ],
     ...transactions.map((t) => [
       t.date ?? "",
       t.description ?? "",
       t.category ?? "",
       t.type ?? "",
       t.status ?? "",
+      t.paidBy === "Other" ? t.paidByOther || "Other" : t.paidBy ?? "",
+      t.paymentMethod ?? "",
       typeof t.amountAED === "number" ? t.amountAED : "",
+      typeof t.runningBalance === "number" ? t.runningBalance : "",
     ]),
   ];
   const base = `https://sheets.googleapis.com/v4/spreadsheets/${config.spreadsheetId}`;
-  const range = encodeURIComponent("A1:F100000"); // first sheet of the spreadsheet
+  const range = encodeURIComponent("A1:I100000"); // first sheet of the spreadsheet
 
   // Full overwrite each sync so re-syncs never duplicate rows
   const clearRes = await fetch(`${base}/values/${range}:clear`, {

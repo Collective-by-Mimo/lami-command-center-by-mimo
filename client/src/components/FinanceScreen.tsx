@@ -6,8 +6,8 @@
  */
 import React, { useMemo, useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { FinanceTransaction, TransactionStatus, TransactionType } from '../types';
-import { FINANCE_CATEGORIES, getFinanceCategory } from '../config/appConfig';
+import { FinanceTransaction, TransactionStatus, TransactionType, PaidBy, PaymentMethod } from '../types';
+import { FINANCE_CATEGORIES, getFinanceCategory, PAID_BY_OPTIONS, PAYMENT_METHOD_OPTIONS } from '../config/appConfig';
 import { AnimatePresence, motion } from 'motion/react';
 import { hapticTap } from '../utils/haptics';
 import {
@@ -56,6 +56,11 @@ export const FinanceScreen: React.FC = () => {
     expenses: { pt: 'Saídas', en: 'Expenses', he: 'הוצאות' }[language],
     reimbursements: { pt: 'Reembolsos', en: 'Reimbursements', he: 'החזרים' }[language],
     balance: { pt: 'Saldo do mês', en: 'Month balance', he: 'יתרת החודש' }[language],
+    allTimeBalance: { pt: 'Saldo acumulado', en: 'All-time balance', he: 'יתרה כוללת' }[language],
+    runningBalance: { pt: 'Saldo corrente', en: 'Running balance', he: 'יתרה שוטפת' }[language],
+    paidByLabel: { pt: 'Pago por', en: 'Paid by', he: 'שולם על ידי' }[language],
+    paidByOtherPh: { pt: 'Especificar...', en: 'Specify...', he: 'פרט...' }[language],
+    paymentMethodLabel: { pt: 'Forma de pagamento', en: 'Payment method', he: 'אמצעי תשלום' }[language],
     exportReport: { pt: 'Exportar relatório', en: 'Export report', he: 'ייצוא דוח' }[language],
     sync: { pt: 'Sincronizar com Google Sheets', en: 'Sync to Google Sheets', he: 'סנכרון ל-Google Sheets' }[language],
     syncPending: {
@@ -125,6 +130,26 @@ export const FinanceScreen: React.FC = () => {
     return { ...acc, balance: acc.income + acc.reimbursement - acc.expense };
   }, [monthTransactions]);
 
+  // ——— Phase 3: cumulative running balance (all-time, chronological) ———
+  const signedAmount = (tx: FinanceTransaction) =>
+    tx.type === 'expense' ? -tx.amountAED : tx.amountAED;
+
+  const runningBalanceById = useMemo(() => {
+    const chronological = [...transactions].sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
+    const map = new Map<string, number>();
+    let running = 0;
+    chronological.forEach((tx) => {
+      running += signedAmount(tx);
+      map.set(tx.id, running);
+    });
+    return map;
+  }, [transactions]);
+
+  const allTimeBalance = useMemo(
+    () => transactions.reduce((sum, tx) => sum + signedAmount(tx), 0),
+    [transactions]
+  );
+
   // ——— Google Sheets sync (server-side creds only — see /api/finance/sync) ———
   const [isSyncing, setIsSyncing] = useState(false);
   const [sheetsPending, setSheetsPending] = useState(false);
@@ -134,7 +159,11 @@ export const FinanceScreen: React.FC = () => {
     setIsSyncing(true);
     try {
       // Receipts stay local — only ledger fields go to the spreadsheet
-      const payload = transactions.map(({ receiptBase64, ...rest }) => rest);
+      const payload = transactions.map(({ receiptBase64, ...rest }) => ({
+        ...rest,
+        paymentMethod: (rest.paymentMethods || []).join('+'),
+        runningBalance: runningBalanceById.get(rest.id) ?? 0
+      }));
       const res = await fetch('/api/finance/sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -159,14 +188,27 @@ export const FinanceScreen: React.FC = () => {
   // ——— CSV report export ———
   const handleExport = () => {
     hapticTap();
-    const header = ['Date', 'Description', 'Category', 'Type', 'Status', 'Amount AED'];
+    const header = [
+      'Date',
+      'Description',
+      'Category',
+      'Type',
+      'Status',
+      'Paid By',
+      'Payment Method',
+      'Amount AED',
+      'Running Balance'
+    ];
     const rows = monthTransactions.map((tx) => [
       tx.date,
       `"${tx.description.replace(/"/g, '""')}"`,
       getFinanceCategory(tx.category)?.label.en || tx.category,
       tx.type,
       tx.status,
-      tx.amountAED.toFixed(2)
+      tx.paidBy === 'Other' ? tx.paidByOther || 'Other' : tx.paidBy || '',
+      (tx.paymentMethods || []).join('+'),
+      tx.amountAED.toFixed(2),
+      (runningBalanceById.get(tx.id) ?? 0).toFixed(2)
     ]);
     const csv = '\ufeff' + [header.join(','), ...rows.map((r) => r.join(','))].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
@@ -187,7 +229,17 @@ export const FinanceScreen: React.FC = () => {
   const [newType, setNewType] = useState<TransactionType>('expense');
   const [newStatus, setNewStatus] = useState<TransactionStatus>('pending');
   const [newReceipt, setNewReceipt] = useState<string | undefined>(undefined);
+  const [newPaidBy, setNewPaidBy] = useState<PaidBy>('Layla');
+  const [newPaidByOther, setNewPaidByOther] = useState('');
+  const [newPaymentMethods, setNewPaymentMethods] = useState<PaymentMethod[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const togglePaymentMethod = (method: PaymentMethod) => {
+    hapticTap();
+    setNewPaymentMethods((prev) =>
+      prev.includes(method) ? prev.filter((m) => m !== method) : [...prev, method]
+    );
+  };
 
   const handleReceiptFile = (file: File | undefined) => {
     if (!file) return;
@@ -215,13 +267,19 @@ export const FinanceScreen: React.FC = () => {
       amountAED: Math.round(amount * 100) / 100,
       type: newType,
       status: newStatus,
-      receiptBase64: newReceipt
+      receiptBase64: newReceipt,
+      paidBy: newPaidBy,
+      paidByOther: newPaidBy === 'Other' ? newPaidByOther.trim() : undefined,
+      paymentMethods: newPaymentMethods
     });
     setSelectedMonth(newDate.slice(0, 7));
     setShowNew(false);
     setNewDescription('');
     setNewAmount('');
     setNewReceipt(undefined);
+    setNewPaidBy('Layla');
+    setNewPaidByOther('');
+    setNewPaymentMethods([]);
   };
 
   const typeColor: Record<TransactionType, string> = {
@@ -302,6 +360,14 @@ export const FinanceScreen: React.FC = () => {
         </span>
       </div>
 
+      {/* Phase 3: all-time running balance strip */}
+      <div className="bg-white rounded-2xl px-4 py-3 border border-[#B8912E]/40 flex items-center justify-between">
+        <span className="text-[13px] font-medium text-[#8A5A00]">{t.allTimeBalance}</span>
+        <span className={`font-mono text-[16px] font-bold ${allTimeBalance < 0 ? 'text-red-700' : 'text-[#B8912E]'}`}>
+          {allTimeBalance < 0 ? '−' : ''}{AED(Math.abs(allTimeBalance), locale)} AED
+        </span>
+      </div>
+
       {/* Actions: export + sheets sync */}
       <div className="flex items-center gap-2 flex-wrap">
         <button
@@ -378,6 +444,16 @@ export const FinanceScreen: React.FC = () => {
                           >
                             {t.statusLabels[tx.status]}
                           </span>
+                          {tx.paidBy && (
+                            <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">
+                              {t.paidByLabel}: {tx.paidBy === 'Other' ? tx.paidByOther || 'Other' : tx.paidBy}
+                            </span>
+                          )}
+                          {(tx.paymentMethods || []).length > 0 && (
+                            <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">
+                              {tx.paymentMethods!.join(' + ')}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -387,6 +463,10 @@ export const FinanceScreen: React.FC = () => {
                         {typeSign[tx.type]}{AED(tx.amountAED, locale)}
                       </p>
                       <p className="text-[10px] text-[#999999]">{t.typeLabels[tx.type]} · AED</p>
+                      <p className="text-[9px] text-[#B8912E] font-mono mt-0.5">
+                        {t.runningBalance}: {(runningBalanceById.get(tx.id) ?? 0) < 0 ? '−' : ''}
+                        {AED(Math.abs(runningBalanceById.get(tx.id) ?? 0), locale)}
+                      </p>
                       {isOperator && (
                         <button
                           onClick={() => deleteTransaction(tx.id)}
@@ -501,6 +581,53 @@ export const FinanceScreen: React.FC = () => {
                   <option value="confirmed">{t.statusLabels.confirmed}</option>
                   <option value="reimbursed">{t.statusLabels.reimbursed}</option>
                 </select>
+              </div>
+
+              {/* Phase 3: Paid By */}
+              <div className="flex gap-2">
+                <select
+                  value={newPaidBy}
+                  onChange={(e) => setNewPaidBy(e.target.value as PaidBy)}
+                  className="flex-1 h-11 rounded-xl border border-[#E2DDD5] px-2 text-[13px] bg-white focus:outline-none focus:border-[#145A52]"
+                >
+                  {PAID_BY_OPTIONS.map((p) => (
+                    <option key={p} value={p}>
+                      {t.paidByLabel}: {p}
+                    </option>
+                  ))}
+                </select>
+                {newPaidBy === 'Other' && (
+                  <input
+                    value={newPaidByOther}
+                    onChange={(e) => setNewPaidByOther(e.target.value)}
+                    placeholder={t.paidByOtherPh}
+                    className="flex-1 h-11 rounded-xl border border-[#E2DDD5] px-3 text-[14px] focus:outline-none focus:border-[#145A52]"
+                  />
+                )}
+              </div>
+
+              {/* Phase 3: Payment Method (multi-select tags) */}
+              <div>
+                <p className="text-[11px] font-medium text-[#6B7280] mb-1.5">{t.paymentMethodLabel}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {PAYMENT_METHOD_OPTIONS.map((method) => {
+                    const active = newPaymentMethods.includes(method);
+                    return (
+                      <button
+                        key={method}
+                        type="button"
+                        onClick={() => togglePaymentMethod(method)}
+                        className={`text-[12px] px-3 py-1.5 rounded-full border transition-colors ${
+                          active
+                            ? 'bg-[#145A52] text-white border-[#145A52]'
+                            : 'bg-white text-[#145A52] border-[#E2DDD5]'
+                        }`}
+                      >
+                        {method}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <input

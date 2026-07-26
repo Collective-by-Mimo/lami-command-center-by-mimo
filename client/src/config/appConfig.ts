@@ -4,7 +4,7 @@
  * Everything here is plain data: Mimo can adjust numbers, labels and
  * categories without touching component code.
  */
-import { I18nText, CaseItem } from '../types';
+import { I18nText, CaseItem, PaidBy, PaymentMethod } from '../types';
 
 // ——— Mimo / LaMi direct line ———
 export const MIMO_WHATSAPP_NUMBER = '971585929669'; // digits only, for wa.me links
@@ -372,3 +372,16 @@ export const FINANCE_CATEGORIES: CaseCategoryDef[] = [
 export function getFinanceCategory(id?: string): CaseCategoryDef | undefined {
   return FINANCE_CATEGORIES.find((c) => c.id === id);
 }
+
+// Phase 3 — cash-flow attribution
+export const PAID_BY_OPTIONS: PaidBy[] = ['Layla', 'Lior', 'Mimo', 'Other'];
+
+export const PAYMENT_METHOD_OPTIONS: PaymentMethod[] = [
+  'Cash',
+  'Card',
+  'Bank Transfer',
+  'PayPal',
+  'Voucher',
+  'Exchange',
+  'Crypto'
+];
