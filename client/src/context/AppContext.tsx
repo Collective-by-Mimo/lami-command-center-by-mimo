@@ -64,10 +64,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // shape is retained internally but only the English value is ever shown.
   const [language] = useState<Language>('en');
 
+  // Private, login-only app: whoever signs in has FULL control by default —
+  // Add / Edit / Delete / upload buttons are always visible. A "client
+  // preview" (read-only look) is still available via ?op=0 or the toggle,
+  // which persists as lami_op_mode='false'.
   const [isOperator, setIsOperatorState] = useState<boolean>(() => {
     const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('op') === '0' || urlParams.get('client') === '1') return false;
     if (urlParams.get('op') === '1' || urlParams.get('operator') === '1') return true;
-    return localStorage.getItem('lami_op_mode') === 'true';
+    return localStorage.getItem('lami_op_mode') !== 'false';
   });
 
   const [hapticsOn, setHapticsOnState] = useState<boolean>(() => isHapticsEnabled());
