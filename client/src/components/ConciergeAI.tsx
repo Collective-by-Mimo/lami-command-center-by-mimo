@@ -7,11 +7,12 @@
  * boundary they belong to.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { X, Send, BellRing } from 'lucide-react';
+import { X, Send, BellRing, Phone } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { AnimatePresence, motion } from 'motion/react';
 import { hapticTap } from '../utils/haptics';
 import { askConcierge, buildGroundingData } from '../services/concierge';
+import { answerLocally } from '../services/localConcierge';
 
 interface ChatMsg {
   role: 'user' | 'ai';
@@ -27,8 +28,13 @@ export const ConciergeAI: React.FC = () => {
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const { language, cases, briefing, utilities, keyDates, isRTL } = useApp();
+  const { language, cases, briefing, utilities, keyDates, transactions, isRTL, showToast } = useApp();
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleCall = () => {
+    hapticTap();
+    showToast('In-app voice call — coming soon ✨');
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -44,7 +50,17 @@ export const ConciergeAI: React.FC = () => {
     setInput('');
     setIsTyping(true);
 
-    // Sanitized snapshot only — internal fields and account numbers never leave the app
+    // Answer from the app's own data first — instant, offline, nothing to break.
+    const local = answerLocally(userMsg, { cases, utilities, keyDates, transactions, briefing });
+    if (local) {
+      await new Promise((r) => setTimeout(r, 600));
+      setMessages((prev) => [...prev, { role: 'ai', text: local }]);
+      setIsTyping(false);
+      return;
+    }
+
+    // Open-ended questions fall through to the server (Gemini/Azure if configured,
+    // else the graceful WhatsApp hand-off). Sanitized snapshot only.
     const groundingData = buildGroundingData(cases, utilities, keyDates, briefing, language);
     const { reply } = await askConcierge(userMsg, language, groundingData);
     setMessages((prev) => [...prev, { role: 'ai', text: reply }]);
@@ -103,9 +119,19 @@ export const ConciergeAI: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <button onClick={() => setIsOpen(false)} className="p-2 opacity-80 hover:opacity-100" aria-label="Close">
-                  <X className="w-5 h-5" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={handleCall}
+                    className="flex items-center gap-1.5 text-[12px] font-semibold bg-[#25D366] text-white px-3 py-1.5 rounded-full active:scale-95 transition-transform"
+                    aria-label="Call Mimo"
+                  >
+                    <Phone className="w-3.5 h-3.5" strokeWidth={2.25} />
+                    <span>Call Mimo</span>
+                  </button>
+                  <button onClick={() => setIsOpen(false)} className="p-2 opacity-80 hover:opacity-100" aria-label="Close">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
 
               {/* Messages */}
