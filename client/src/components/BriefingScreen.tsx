@@ -30,7 +30,8 @@ export const BriefingScreen: React.FC = () => {
     activeRadarSuggestion,
     isRTL,
     isOperator,
-    updateBriefingText
+    updateBriefingText,
+    showToast
   } = useApp();
   const [isBriefingCollapsed, setIsBriefingCollapsed] = useState(true);
   const [editingBriefing, setEditingBriefing] = useState(false);
@@ -268,6 +269,29 @@ export const BriefingScreen: React.FC = () => {
             />
           </div>
         </a>
+
+        <button
+          onClick={() => {
+            hapticTap();
+            showToast('In-app voice call — coming soon ✨');
+          }}
+          className="w-full bg-[#145A52] rounded-2xl p-[14px] active:scale-[0.99] transition-transform text-start"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="w-10 h-10 rounded-full bg-[#25D366] flex items-center justify-center shrink-0">
+                <Phone className="w-[18px] h-[18px] text-white" strokeWidth={2} />
+              </span>
+              <div className="min-w-0">
+                <p className="font-serif-display text-[17px] font-semibold text-white leading-tight">
+                  Call Mimo
+                </p>
+                <p className="text-[12px] text-[#CFE3DE] truncate mt-0.5">Voice call inside the app · coming soon</p>
+              </div>
+            </div>
+            <ChevronRight className={`w-4 h-4 text-[#B8912E] shrink-0 ${isRTL ? 'rotate-180' : ''}`} />
+          </div>
+        </button>
 
         <div className="grid grid-cols-2 gap-3">
           <button
