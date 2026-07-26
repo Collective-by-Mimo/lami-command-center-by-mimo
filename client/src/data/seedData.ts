@@ -34,6 +34,73 @@ export const INITIAL_UTILITIES: UtilityItem[] = [
 
 export const INITIAL_TRANSACTIONS: FinanceTransaction[] = [
   {
+    id: 'tx-pettycash-topup',
+    date: '2026-07-17',
+    description: 'Petty cash top-up — bank transfer to Zena account',
+    category: 'outros',
+    amountAED: 400,
+    type: 'income',
+    status: 'confirmed',
+    paidBy: 'Other',
+    paidByOther: 'Zena account',
+    paymentMethods: ['Bank Transfer']
+  },
+  {
+    id: 'tx-pc-tailor',
+    date: '2026-07-26',
+    description: 'Tailor alteration — black dress cutting',
+    category: 'pessoal',
+    amountAED: 50,
+    type: 'expense',
+    status: 'confirmed',
+    paidBy: 'Mimo',
+    paymentMethods: ['Cash']
+  },
+  {
+    id: 'tx-pc-fuel',
+    date: '2026-07-26',
+    description: 'ENOC petrol station — vehicle fuel',
+    category: 'transporte',
+    amountAED: 80,
+    type: 'expense',
+    status: 'confirmed',
+    paidBy: 'Mimo',
+    paymentMethods: ['Cash']
+  },
+  {
+    id: 'tx-pc-mobile',
+    date: '2026-07-26',
+    description: 'Virgin Mobile top-up — communication balance',
+    category: 'outros',
+    amountAED: 20,
+    type: 'expense',
+    status: 'confirmed',
+    paidBy: 'Mimo',
+    paymentMethods: ['Cash']
+  },
+  {
+    id: 'tx-pc-brush',
+    date: '2026-07-26',
+    description: 'Carpet brush — cleaning tool',
+    category: 'casa',
+    amountAED: 17,
+    type: 'expense',
+    status: 'confirmed',
+    paidBy: 'Mimo',
+    paymentMethods: ['Cash']
+  },
+  {
+    id: 'tx-pc-glue',
+    date: '2026-07-26',
+    description: 'Master glue — shoe repair (self-repaired)',
+    category: 'pessoal',
+    amountAED: 34.5,
+    type: 'expense',
+    status: 'confirmed',
+    paidBy: 'Mimo',
+    paymentMethods: ['Cash']
+  },
+  {
     id: 'tx-2026-07-01',
     date: '2026-07-24',
     description: 'Laundry — 5 delicate pieces (home pickup)',
@@ -90,6 +157,71 @@ export const INITIAL_TRANSACTIONS: FinanceTransaction[] = [
 ];
 
 export const INITIAL_CASES: CaseItem[] = [
+  {
+    id: 'case-apartment-cleaning',
+    category: 'casa',
+    emoji: '🛋️',
+    title: 'Apartment Carpet & Upholstery Cleaning',
+    clientState: '🔔 Awaiting you',
+    internalStatus: 'Open',
+    priority: 'Normal',
+    isRecurring: false,
+    nextStep: 'Awaiting your confirmation to access the apartment — machine & chemicals are ready.',
+    timeline: [
+      {
+        id: 'tl-apt-1',
+        date: '2026-07-26',
+        time: '12:00',
+        addedBy: 'operator',
+        content: 'Machine and cleaning chemicals ready. Scope: carpets, two armchairs and one sofa. Awaiting apartment access. Also offered an optional general apartment cleaning during the same visit.'
+      }
+    ]
+  },
+  {
+    id: 'case-dress-photography',
+    category: 'moda-luxo',
+    emoji: '📸',
+    title: 'Dress Photography for Resale',
+    clientState: '🔔 Awaiting you',
+    internalStatus: 'Open',
+    priority: 'Normal',
+    isRecurring: false,
+    nextStep: 'Awaiting your approval to access the apartment for a proper indoor photo setup.',
+    timeline: [
+      {
+        id: 'tl-photo-1',
+        date: '2026-07-26',
+        time: '12:00',
+        addedBy: 'operator',
+        content: 'Dresses not yet photographed. A professional indoor setup (good lighting + suitable background) is needed to maximise resale value. Awaiting apartment access, then the dresses can be listed.'
+      }
+    ]
+  },
+  {
+    id: 'case-rugs-clean',
+    category: 'casa',
+    emoji: '🧺',
+    title: 'Rugs & Bath Mats — Hand Cleaning (4 items)',
+    clientState: '✔️ Completed',
+    internalStatus: 'Completed',
+    priority: 'Normal',
+    isRecurring: false,
+    nextStep: 'Deliver the 4 cleaned & dried items to your address.',
+    completedMonth: '2026-07',
+    timeline: [
+      {
+        id: 'tl-rugs-1',
+        date: '2026-07-26',
+        time: '12:00',
+        addedBy: 'operator',
+        content: 'Cleaned all four rugs/bath mats by hand to avoid an external laundry cost. Fully dried, neatly packed and ready for delivery.'
+      }
+    ],
+    completionProof: {
+      note: 'All four items hand-cleaned, dried and packed. External laundry service avoided — cost saving achieved.',
+      completedAt: '2026-07-26'
+    }
+  },
   {
     id: 'case-lv-bag',
     category: 'moda-luxo',
