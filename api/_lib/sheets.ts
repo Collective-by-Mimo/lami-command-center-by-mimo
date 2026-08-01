@@ -119,3 +119,18 @@ export async function syncLedgerToSheet(config: SheetsConfig, transactions: Ledg
   if (!writeRes.ok) throw new Error(`Sheets write failed: ${writeRes.status}`);
   return transactions.length;
 }
+
+// Non-networking validator: checks presence and basic structure of sheets env vars
+export function validateSheetsConfig() : { valid: boolean; reason?: string } {
+  const raw = process.env.GOOGLE_SHEETS_CREDENTIALS || '';
+  const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID || '';
+  if (!raw) return { valid: false, reason: 'missing_credentials' };
+  if (!spreadsheetId) return { valid: false, reason: 'missing_spreadsheet_id' };
+  try {
+    const creds = JSON.parse(raw);
+    if (!creds.client_email || !creds.private_key) return { valid: false, reason: 'incomplete_service_account' };
+    return { valid: true };
+  } catch (e) {
+    return { valid: false, reason: 'credentials_not_json' };
+  }
+}
