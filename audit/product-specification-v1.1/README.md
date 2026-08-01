@@ -2,7 +2,7 @@
 
 ## Personal Concierge Operating System
 
-**Document status:** Complete modular draft awaiting consistency review and approval  
+**Document status:** Complete modular draft under consistency review  
 **Baseline:** Approved Product Vision Report  
 **Entry point:** `audit/14_Product_Specification_Addendum_v1.1.md`  
 **Implementation authority:** None
@@ -48,6 +48,7 @@ Capture → Understand → Organize → Recommend → Request Approval
 15. [End-to-End Workflows](15_End_to_End_Workflows.md)
 16. [Product Requirements Catalog](16_Product_Requirements_Catalog.md)
 17. [Glossary and Traceability Index](17_Glossary_and_Traceability_Index.md)
+18. [Consistency Review and Approval Checklist](18_Consistency_Review_and_Approval_Checklist.md)
 
 ## Normative Language
 
@@ -75,14 +76,20 @@ AI inference never becomes authoritative merely because it is stored or repeated
 
 This suite does not select technology, redesign architecture, define database schemas, authorize implementation, authorize migration, change production systems, or modify the approved Product Vision.
 
+## Review State
+
+The modular draft exists and is now undergoing controlled review. Chapter 18 records the consistency findings, expansion backlog, and approval checklist.
+
+The first targeted review confirmed that the AI, Life Hub, Finance, Notification, Shared Workspace, and Requirements Catalog chapters cover their requested subject areas. It also identified requirement-traceability and terminology work that must be completed before approval.
+
 ## Approval State
 
-The complete modular draft now exists. It becomes authoritative only after:
+The suite becomes authoritative only after:
 
 1. Consistency review against Product Vision.
 2. Cross-chapter review.
 3. Requirement-ID and terminology review.
-4. Resolution of contradictions.
+4. Resolution of contradictions and omissions.
 5. Explicit user approval.
 
 Architecture and implementation planning must not begin before approval.
