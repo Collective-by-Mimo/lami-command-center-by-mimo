@@ -1,9 +1,10 @@
-import express from "express";
+﻿import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { conciergeReply } from "../api/_lib/concierge.js";
 import { getSheetsConfig, syncLedgerToSheet, LedgerRow } from "../api/_lib/sheets.js";
+import { getConciergeConfig, getSheetsEnvStatus, getDevPlaceholders, getSupabasePlaceholders } from '../api/_lib/health.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,9 +15,22 @@ async function startServer() {
 
   app.use(express.json({ limit: "2mb" }));
 
-  // AUTH: Supabase multi-user — Phase 2 integration point.
+  // Health endpoint: non-networking readiness checks (no external calls)
+  app.get('/api/health', (_req, res) => {
+    try {
+      const concierge = getConciergeConfig();
+      const sheets = getSheetsEnvStatus();
+      const dev = getDevPlaceholders();
+      const supa = getSupabasePlaceholders();
+      res.json({ ok: true, nodeEnv: process.env.NODE_ENV || 'development', concierge, sheets, dev, supabase: supa });
+    } catch (e) {
+      res.status(500).json({ ok: false, error: String(e) });
+    }
+  });
 
-  // Concierge AI — GEMINI_API_KEY stays server-side; failures degrade to a
+  // AUTH: Supabase multi-user â€” Phase 2 integration point.
+
+  // Concierge AI â€” GEMINI_API_KEY stays server-side; failures degrade to a
   // graceful WhatsApp hand-off with HTTP 200, never a raw error.
   app.post("/api/concierge", async (req, res) => {
     res.json(await conciergeReply(req.body));
@@ -26,7 +40,7 @@ async function startServer() {
     res.json({ sheetsConfigured: getSheetsConfig() !== null });
   });
 
-  // Google Sheets sync — credentials from env only; without them the client
+  // Google Sheets sync â€” credentials from env only; without them the client
   // keeps localStorage ("Google Sheets sync pending").
   app.post("/api/finance/sync", async (req, res) => {
     const config = getSheetsConfig();
