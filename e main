@@ -1,0 +1,26 @@
+*   [33mb5471e7[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m Merge pull request #7 from Collective-by-Mimo/docs/product-specification-addendum-v1.1
+[31m|[m[32m\[m  
+[31m|[m * [33mdf71aa3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdocs/product-specification-addendum-v1.1[m[33m, [m[1;31morigin/docs/product-specification-addendum-v1.1[m[33m)[m docs: add root project README
+[31m|[m * [33ma8c3a50[m docs: complete modular specification draft and add traceability index
+[31m|[m * [33m27fef7b[m docs: add notification, workspace, privacy, and product governance chapters
+[31m|[m * [33m80ac9f8[m docs: add Life Hub, finance, knowledge, and safety specifications
+[31m|[m * [33mbb44653[m docs: begin modular Product Specification v1.1
+[31m|[m * [33mf976ee2[m docs: add Product Specification Addendum v1.1
+* [32m|[m [33m22c2a61[m Merge pull request #6 from Collective-by-Mimo/claude/project-audit-package-30gzwt
+[33m|[m[32m\[m[32m|[m 
+[33m|[m * [33me04bf29[m[33m ([m[1;31morigin/claude/project-audit-package-30gzwt[m[33m, [m[1;32mclaude/project-audit-package-30gzwt[m[33m)[m Add project audit package: 13-document current-state architecture audit
+[33m|[m[33m/[m  
+* [33m3393da3[m Concierge answers locally from app data + visual Call Mimo button (#5)
+[34m|[m * [33me2bfeee[m[33m ([m[1;31morigin/claude/lami-command-center-features-gmjor1[m[33m, [m[1;32mclaude/lami-command-center-features-gmjor1[m[33m)[m Concierge answers locally from app data + visual Call Mimo button
+[34m|[m[34m/[m  
+* [33mb813bec[m English-only cleanup + today's task updates on the demo (#4)
+* [33m8e3e898[m Phase 3: finance cash-flow (Paid By, Payment Method tags, cumulative running balance)
+* [33m09075f3[m Phase 2: rebuild category system (13 nested, always-selectable, add-your-own)
+* [33m53f0dc9[m Phase 1: logged-in user gets full control by default (visible add/edit/delete)
+* [33m2f52243[m Add in-app Services catalogue screen (full presentation brief)
+* [33m5a7f6e2[m Convert app to English-only, LTR (remove PT/HE multi-language support)
+*   [33m8eadba7[m Merge pull request #2 from Collective-by-Mimo/ui-quality-pass
+[36m|[m[1;31m\[m  
+[36m|[m * [33m2ab84c3[m[33m ([m[1;31morigin/ui-quality-pass[m[33m, [m[1;32mui-quality-pass[m[33m)[m UI quality pass: flatten shadows to hairlines, emoji icons → Lucide, tighter surfaces
+[36m|[m[36m/[m  
+* [33m46381d8[m[33m ([m[1;31morigin/architecture-audit-and-stabilization[m[33m, [m[1;32marchitecture-audit-and-stabilization[m[33m)[m feat: update icon paths and remove unused components
